@@ -1,0 +1,634 @@
+diff --git antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/ParserRuleContext.java antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/ParserRuleContext.java
+index 4513b09..6610739 100644
+--- antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/ParserRuleContext.java
++++ antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/ParserRuleContext.java
+@@ -39,14 +39,14 @@ import java.util.List;
+  *  group values such as this aggregate.  The getters/setters are there to
+  *  satisfy the superclass interface.
+  */
+-public class ParserRuleContext extends RuleContext {
++public class ParserRuleContext<P> extends RuleContext<P> {
+ 	/** If we are debugging or building a parse tree for a visitor,
+ 	 *  we need to track all of the tokens and rule invocations associated
+ 	 *  with this rule's context. This is empty for parsing w/o tree constr.
+ 	 *  operation because we don't the need to track the details about
+ 	 *  how we parse this rule.
+ 	 */
+-	public List<ParseTree> children;
++	public List<ParseTree<P>> children;
+ 
+ 	/** For debugging/tracing purposes, we want to track all of the nodes in
+ 	 *  the ATN traversed by the parser for a particular rule.
+@@ -90,7 +90,7 @@ public class ParserRuleContext extends RuleContext {
+ 	 *  to the generic XContext so this function must copy those nodes to
+ 	 *  the YContext as well else they are lost!
+ 	 */
+-	public void copyFrom(ParserRuleContext ctx) {
++	public void copyFrom(ParserRuleContext<P> ctx) {
+ 		this.parent = ctx.parent;
+ 		this.invokingState = ctx.invokingState;
+ 
+@@ -101,15 +101,15 @@ public class ParserRuleContext extends RuleContext {
+ 		if ( ctx.children!=null ) {
+ 			this.children = new ArrayList<>();
+ 			// reset parent pointer for any error nodes
+-			for (ParseTree child : ctx.children) {
++			for (ParseTree<P> child : ctx.children) {
+ 				if ( child instanceof ErrorNode ) {
+-					addChild((ErrorNode)child);
++					addChild((ErrorNode<P>)child);
+ 				}
+ 			}
+ 		}
+ 	}
+ 
+-	public ParserRuleContext(ParserRuleContext parent, int invokingStateNumber) {
++	public ParserRuleContext(ParserRuleContext<P> parent, int invokingStateNumber) {
+ 		super(parent, invokingStateNumber);
+ 	}
+ 
+@@ -129,18 +129,18 @@ public class ParserRuleContext extends RuleContext {
+ 	 *
+ 	 *  @since 4.7
+ 	 */
+-	public <T extends ParseTree> T addAnyChild(T t) {
++	public <T extends ParseTree<P>> T addAnyChild(T t) {
+ 		if ( children==null ) children = new ArrayList<>();
+ 		children.add(t);
+ 		return t;
+ 	}
+ 
+-	public RuleContext addChild(RuleContext ruleInvocation) {
++	public RuleContext<P> addChild(RuleContext<P> ruleInvocation) {
+ 		return addAnyChild(ruleInvocation);
+ 	}
+ 
+ 	/** Add a token leaf node child and force its parent to be this node. */
+-	public TerminalNode addChild(TerminalNode t) {
++	public TerminalNode<P> addChild(TerminalNode<P> t) {
+ 		t.setParent(this);
+ 		return addAnyChild(t);
+ 	}
+@@ -149,7 +149,7 @@ public class ParserRuleContext extends RuleContext {
+ 	 *
+ 	 * @since 4.7
+ 	 */
+-	public ErrorNode addErrorNode(ErrorNode errorNode) {
++	public ErrorNode<P> addErrorNode(ErrorNode<P> errorNode) {
+ 		errorNode.setParent(this);
+ 		return addAnyChild(errorNode);
+ 	}
+@@ -160,8 +160,8 @@ public class ParserRuleContext extends RuleContext {
+      *  in for compatibility but the parser doesn't use this anymore.
+ 	 */
+ 	@Deprecated
+-	public TerminalNode addChild(Token matchedToken) {
+-		TerminalNodeImpl t = new TerminalNodeImpl(matchedToken);
++	public TerminalNode<P> addChild(Token matchedToken) {
++		TerminalNodeImpl<P> t = new TerminalNodeImpl<>(matchedToken);
+ 		addAnyChild(t);
+ 		t.setParent(this);
+ 		return t;
+@@ -174,7 +174,7 @@ public class ParserRuleContext extends RuleContext {
+ 	 */
+ 	@Deprecated
+ 	public ErrorNode addErrorNode(Token badToken) {
+-		ErrorNodeImpl t = new ErrorNodeImpl(badToken);
++		ErrorNodeImpl<P> t = new ErrorNodeImpl<>(badToken);
+ 		addAnyChild(t);
+ 		t.setParent(this);
+ 		return t;
+@@ -197,12 +197,12 @@ public class ParserRuleContext extends RuleContext {
+ 
+ 	@Override
+ 	/** Override to make type more specific */
+-	public ParserRuleContext getParent() {
+-		return (ParserRuleContext)super.getParent();
++	public ParserRuleContext<P> getParent() {
++		return (ParserRuleContext<P>)super.getParent();
+ 	}
+ 
+ 	@Override
+-	public ParseTree getChild(int i) {
++	public ParseTree<P> getChild(int i) {
+ 		return children!=null && i>=0 && i<children.size() ? children.get(i) : null;
+ 	}
+ 
+@@ -257,7 +257,7 @@ public class ParserRuleContext extends RuleContext {
+ 				Token symbol = tnode.getSymbol();
+ 				if ( symbol.getType()==ttype ) {
+ 					if ( tokens==null ) {
+-						tokens = new ArrayList<TerminalNode>();
++						tokens = new ArrayList<>();
+ 					}
+ 					tokens.add(tnode);
+ 				}
+@@ -284,7 +284,7 @@ public class ParserRuleContext extends RuleContext {
+ 		for (ParseTree o : children) {
+ 			if ( ctxType.isInstance(o) ) {
+ 				if ( contexts==null ) {
+-					contexts = new ArrayList<T>();
++					contexts = new ArrayList<>();
+ 				}
+ 
+ 				contexts.add(ctxType.cast(o));
+diff --git antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/RuleContext.java antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/RuleContext.java
+index 8b7f168..ab7a694 100644
+--- antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/RuleContext.java
++++ antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/RuleContext.java
+@@ -65,11 +65,11 @@ import java.util.List;
+  *
+  *  @see ParserRuleContext
+  */
+-public class RuleContext implements RuleNode {
+-	public static final ParserRuleContext EMPTY = new ParserRuleContext();
++public class RuleContext<P> implements RuleNode<P> {
++	public static final ParserRuleContext EMPTY = new ParserRuleContext<>();
+ 
+ 	/** What context invoked this rule? */
+-	public RuleContext parent;
++	public RuleContext<P> parent;
+ 
+ 	/** What state invoked the rule associated with this context?
+ 	 *  The "return address" is the followState of invokingState
+@@ -80,7 +80,7 @@ public class RuleContext implements RuleNode {
+ 
+ 	public RuleContext() {}
+ 
+-	public RuleContext(RuleContext parent, int invokingState) {
++	public RuleContext(RuleContext<P> parent, int invokingState) {
+ 		this.parent = parent;
+ 		//if ( parent!=null ) System.out.println("invoke "+stateNumber+" from "+parent);
+ 		this.invokingState = invokingState;
+@@ -88,7 +88,7 @@ public class RuleContext implements RuleNode {
+ 
+ 	public int depth() {
+ 		int n = 0;
+-		RuleContext p = this;
++		RuleContext<P> p = this;
+ 		while ( p!=null ) {
+ 			p = p.parent;
+ 			n++;
+@@ -111,13 +111,13 @@ public class RuleContext implements RuleNode {
+ 	}
+ 
+ 	@Override
+-	public RuleContext getRuleContext() { return this; }
++	public RuleContext<P> getRuleContext() { return this; }
+ 
+ 	@Override
+-	public RuleContext getParent() { return parent; }
++	public RuleContext<P> getParent() { return parent; }
+ 
+ 	@Override
+-	public RuleContext getPayload() { return this; }
++	public RuleContext<P> getPayload() { return this; }
+ 
+ 	/** Return the combined text of all child nodes. This method only considers
+ 	 *  tokens which have been added to the parse tree.
+@@ -165,12 +165,12 @@ public class RuleContext implements RuleNode {
+ 
+ 	/** @since 4.7. {@see ParseTree#setParent} comment */
+ 	@Override
+-	public void setParent(RuleContext parent) {
++	public void setParent(RuleContext<P> parent) {
+ 		this.parent = parent;
+ 	}
+ 
+ 	@Override
+-	public ParseTree getChild(int i) {
++	public ParseTree<P> getChild(int i) {
+ 		return null;
+ 	}
+ 
+@@ -180,7 +180,7 @@ public class RuleContext implements RuleNode {
+ 	}
+ 
+ 	@Override
+-	public <T> T accept(ParseTreeVisitor<? extends T> visitor) { return visitor.visitChildren(this); }
++	public <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) { return visitor.visitChildren(this, parameter); }
+ 
+ 	/** Print out a whole tree, not just a node, in LISP format
+ 	 *  (root child1 .. childN). Print just a node if this is a leaf.
+@@ -205,11 +205,12 @@ public class RuleContext implements RuleNode {
+ 
+ 	@Override
+ 	public String toString() {
+-		return toString((List<String>)null, (RuleContext)null);
++		return toString((List<String>)null, null);
+ 	}
+ 
++	@SuppressWarnings("unchecked")
+ 	public final String toString(Recognizer<?,?> recog) {
+-		return toString(recog, ParserRuleContext.EMPTY);
++		return toString(recog, (ParserRuleContext<P>)ParserRuleContext.EMPTY);
+ 	}
+ 
+ 	public final String toString(List<String> ruleNames) {
+@@ -217,15 +218,15 @@ public class RuleContext implements RuleNode {
+ 	}
+ 
+ 	// recog null unless ParserRuleContext, in which case we use subclass toString(...)
+-	public String toString(Recognizer<?,?> recog, RuleContext stop) {
++	public String toString(Recognizer<?,?> recog, RuleContext<P> stop) {
+ 		String[] ruleNames = recog != null ? recog.getRuleNames() : null;
+ 		List<String> ruleNamesList = ruleNames != null ? Arrays.asList(ruleNames) : null;
+ 		return toString(ruleNamesList, stop);
+ 	}
+ 
+-	public String toString(List<String> ruleNames, RuleContext stop) {
++	public String toString(List<String> ruleNames, RuleContext<P> stop) {
+ 		StringBuilder buf = new StringBuilder();
+-		RuleContext p = this;
++		RuleContext<P> p = this;
+ 		buf.append("[");
+ 		while (p != null && p != stop) {
+ 			if (ruleNames == null) {
+diff --git antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.java antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.java
+index 93eaa46..75a5603 100644
+--- antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.java
++++ antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/AbstractParseTreeVisitor.java
+@@ -6,7 +6,7 @@
+ 
+ package org.antlr.v4.runtime.tree;
+ 
+-public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T> {
++public abstract class AbstractParseTreeVisitor<T, P> implements ParseTreeVisitor<T, P> {
+ 	/**
+ 	 * {@inheritDoc}
+ 	 *
+@@ -14,8 +14,8 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
+ 	 * specified tree.</p>
+ 	 */
+ 	@Override
+-	public T visit(ParseTree tree) {
+-		return tree.accept(this);
++	public T visit(ParseTree<P> tree, P parameter) {
++		return tree.accept(this, parameter);
+ 	}
+ 
+ 	/**
+@@ -34,7 +34,7 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
+ 	 * method to behave properly in respect to the specific algorithm in use.</p>
+ 	 */
+ 	@Override
+-	public T visitChildren(RuleNode node) {
++	public T visitChildren(RuleNode<P> node, P parameter) {
+ 		T result = defaultResult();
+ 		int n = node.getChildCount();
+ 		for (int i=0; i<n; i++) {
+@@ -42,8 +42,8 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
+ 				break;
+ 			}
+ 
+-			ParseTree c = node.getChild(i);
+-			T childResult = c.accept(this);
++			ParseTree<P> c = node.getChild(i);
++			T childResult = c.accept(this, parameter);
+ 			result = aggregateResult(result, childResult);
+ 		}
+ 
+@@ -57,7 +57,7 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
+ 	 * {@link #defaultResult defaultResult}.</p>
+ 	 */
+ 	@Override
+-	public T visitTerminal(TerminalNode node) {
++	public T visitTerminal(TerminalNode<P> node, P parameter) {
+ 		return defaultResult();
+ 	}
+ 
+@@ -68,7 +68,7 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
+ 	 * {@link #defaultResult defaultResult}.</p>
+ 	 */
+ 	@Override
+-	public T visitErrorNode(ErrorNode node) {
++	public T visitErrorNode(ErrorNode<P> node, P parameter) {
+ 		return defaultResult();
+ 	}
+ 
+@@ -134,7 +134,7 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
+ 	 * {@code false} to stop visiting children and immediately return the
+ 	 * current aggregate result from {@link #visitChildren}.
+ 	 */
+-	protected boolean shouldVisitNextChild(RuleNode node, T currentResult) {
++	protected boolean shouldVisitNextChild(RuleNode<P> node, T currentResult) {
+ 		return true;
+ 	}
+ 
+diff --git antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ErrorNode.java antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ErrorNode.java
+index a54fce5..60dbca1 100644
+--- antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ErrorNode.java
++++ antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ErrorNode.java
+@@ -6,5 +6,5 @@
+ 
+ package org.antlr.v4.runtime.tree;
+ 
+-public interface ErrorNode extends TerminalNode {
++public interface ErrorNode<P> extends TerminalNode<P> {
+ }
+diff --git antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ErrorNodeImpl.java antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ErrorNodeImpl.java
+index 769763a..a0ffc8f 100644
+--- antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ErrorNodeImpl.java
++++ antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ErrorNodeImpl.java
+@@ -14,13 +14,14 @@ import org.antlr.v4.runtime.Token;
+  *  and deletion as well as during "consume until error recovery set"
+  *  upon no viable alternative exceptions.
+  */
+-public class ErrorNodeImpl extends TerminalNodeImpl implements ErrorNode {
++public class ErrorNodeImpl<P> extends TerminalNodeImpl<P> implements ErrorNode<P> {
+ 	public ErrorNodeImpl(Token token) {
+ 		super(token);
+ 	}
+ 
+ 	@Override
+-	public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+-		return visitor.visitErrorNode(this);
++	public <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) {
++		return visitor.visitErrorNode(this, parameter);
+ 	}
++
+ }
+diff --git antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ParseTree.java antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ParseTree.java
+index 2417068..8af7a50 100644
+--- antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ParseTree.java
++++ antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ParseTree.java
+@@ -17,12 +17,12 @@ import org.antlr.v4.runtime.Token;
+  *
+  *  <p>The payload is either a {@link Token} or a {@link RuleContext} object.</p>
+  */
+-public interface ParseTree extends SyntaxTree {
++public interface ParseTree<P> extends SyntaxTree {
+ 	// the following methods narrow the return type; they are not additional methods
+ 	@Override
+-	ParseTree getParent();
++	ParseTree<P> getParent();
+ 	@Override
+-	ParseTree getChild(int i);
++	ParseTree<P> getChild(int i);
+ 
+ 
+ 	/** Set the parent for this node.
+@@ -40,10 +40,10 @@ public interface ParseTree extends SyntaxTree {
+ 	 *
+ 	 *  @since 4.7
+ 	 */
+-	void setParent(RuleContext parent);
++	void setParent(RuleContext<P> parent);
+ 
+ 	/** The {@link ParseTreeVisitor} needs a double dispatch method. */
+-	<T> T accept(ParseTreeVisitor<? extends T> visitor);
++	default <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) { return null; }
+ 
+ 	/** Return the combined text of all leaf nodes. Does not get any
+ 	 *  off-channel tokens (if any) so won't return whitespace and
+diff --git antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ParseTreeVisitor.java antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ParseTreeVisitor.java
+index 862ba05..40c53be 100644
+--- antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ParseTreeVisitor.java
++++ antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/ParseTreeVisitor.java
+@@ -14,7 +14,7 @@ package org.antlr.v4.runtime.tree;
+  * @param <T> The return type of the visit operation. Use {@link Void} for
+  * operations with no return type.
+  */
+-public interface ParseTreeVisitor<T> {
++public interface ParseTreeVisitor<T, P> {
+ 
+ 	/**
+ 	 * Visit a parse tree, and return a user-defined result of the operation.
+@@ -22,7 +22,7 @@ public interface ParseTreeVisitor<T> {
+ 	 * @param tree The {@link ParseTree} to visit.
+ 	 * @return The result of visiting the parse tree.
+ 	 */
+-	T visit(ParseTree tree);
++	T visit(ParseTree<P> tree, P parameter);
+ 
+ 	/**
+ 	 * Visit the children of a node, and return a user-defined result of the
+@@ -31,7 +31,7 @@ public interface ParseTreeVisitor<T> {
+ 	 * @param node The {@link RuleNode} whose children should be visited.
+ 	 * @return The result of visiting the children of the node.
+ 	 */
+-	T visitChildren(RuleNode node);
++	T visitChildren(RuleNode<P> node, P parameter);
+ 
+ 	/**
+ 	 * Visit a terminal node, and return a user-defined result of the operation.
+@@ -39,7 +39,7 @@ public interface ParseTreeVisitor<T> {
+ 	 * @param node The {@link TerminalNode} to visit.
+ 	 * @return The result of visiting the node.
+ 	 */
+-	T visitTerminal(TerminalNode node);
++	T visitTerminal(TerminalNode<P> node, P parameter);
+ 
+ 	/**
+ 	 * Visit an error node, and return a user-defined result of the operation.
+@@ -47,6 +47,6 @@ public interface ParseTreeVisitor<T> {
+ 	 * @param node The {@link ErrorNode} to visit.
+ 	 * @return The result of visiting the node.
+ 	 */
+-	T visitErrorNode(ErrorNode node);
++	T visitErrorNode(ErrorNode<P> node, P parameter);
+ 
+ }
+diff --git antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/RuleNode.java antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/RuleNode.java
+index f4a1235..33e6ca0 100644
+--- antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/RuleNode.java
++++ antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/RuleNode.java
+@@ -8,6 +8,6 @@ package org.antlr.v4.runtime.tree;
+ 
+ import org.antlr.v4.runtime.RuleContext;
+ 
+-public interface RuleNode extends ParseTree {
+-	RuleContext getRuleContext();
++public interface RuleNode<P> extends ParseTree<P> {
++	RuleContext<P> getRuleContext();
+ }
+diff --git antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/TerminalNode.java antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/TerminalNode.java
+index c7cfe64..7ec2757 100644
+--- antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/TerminalNode.java
++++ antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/TerminalNode.java
+@@ -8,6 +8,6 @@ package org.antlr.v4.runtime.tree;
+ 
+ import org.antlr.v4.runtime.Token;
+ 
+-public interface TerminalNode extends ParseTree {
++public interface TerminalNode<P> extends ParseTree<P> {
+ 	Token getSymbol();
+ }
+diff --git antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/TerminalNodeImpl.java antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/TerminalNodeImpl.java
+index 9869cb2..8901f8f 100644
+--- antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/TerminalNodeImpl.java
++++ antlr4-pvisitor/src/main/java/org/antlr/v4/runtime/tree/TerminalNodeImpl.java
+@@ -11,23 +11,23 @@ import org.antlr.v4.runtime.RuleContext;
+ import org.antlr.v4.runtime.Token;
+ import org.antlr.v4.runtime.misc.Interval;
+ 
+-public class TerminalNodeImpl implements TerminalNode {
+-	public Token symbol;
+-	public ParseTree parent;
++public class TerminalNodeImpl<P> implements TerminalNode<P> {
++	public Token        symbol;
++	public ParseTree<P> parent;
+ 
+ 	public TerminalNodeImpl(Token symbol) {	this.symbol = symbol;	}
+ 
+ 	@Override
+-	public ParseTree getChild(int i) {return null;}
++	public ParseTree<P> getChild(int i) {return null;}
+ 
+ 	@Override
+ 	public Token getSymbol() {return symbol;}
+ 
+ 	@Override
+-	public ParseTree getParent() { return parent; }
++	public ParseTree<P> getParent() { return parent; }
+ 
+ 	@Override
+-	public void setParent(RuleContext parent) {
++	public void setParent(RuleContext<P> parent) {
+ 		this.parent = parent;
+ 	}
+ 
+@@ -46,8 +46,8 @@ public class TerminalNodeImpl implements TerminalNode {
+ 	public int getChildCount() { return 0; }
+ 
+ 	@Override
+-	public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+-		return visitor.visitTerminal(this);
++	public <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) {
++		return visitor.visitTerminal(this, parameter);
+ 	}
+ 
+ 	@Override
+diff --git antlr4-pvisitor/src/main/resources/org/antlr/v4/tool/templates/codegen/Java/Java.stg antlr4-pvisitor/src/main/resources/org/antlr/v4/tool/templates/codegen/Java/Java.stg
+index 1683a18..cfc9f1a 100644
+--- antlr4-pvisitor/src/main/resources/org/antlr/v4/tool/templates/codegen/Java/Java.stg
++++ antlr4-pvisitor/src/main/resources/org/antlr/v4/tool/templates/codegen/Java/Java.stg
+@@ -170,7 +170,7 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
+  * @param \<T> The return type of the visit operation. Use {@link Void} for
+  * operations with no return type.
+  */
+-public interface <file.grammarName>Visitor\<T> extends ParseTreeVisitor\<T> {
++public interface <file.grammarName>Visitor\<T, P> extends ParseTreeVisitor\<T, P> {
+ 	<file.visitorNames:{lname |
+ /**
+ <if(file.visitorLabelRuleNames.(lname))>
+@@ -182,7 +182,7 @@ public interface <file.grammarName>Visitor\<T> extends ParseTreeVisitor\<T> {
+  * @param ctx the parse tree
+  * @return the visitor result
+  */
+-T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx);}; separator="\n">
++T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx, P parameter);}; separator="\n">
+ }
+ >>
+ 
+@@ -193,6 +193,7 @@ package <file.genPackage>;
+ <endif>
+ <header>
+ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
++import org.antlr.v4.runtime.tree.RuleNode;
+ 
+ /**
+  * This class provides an empty implementation of {@link <file.grammarName>Visitor},
+@@ -202,7 +203,7 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
+  * @param \<T> The return type of the visit operation. Use {@link Void} for
+  * operations with no return type.
+  */
+-public class <file.grammarName>BaseVisitor\<T> extends AbstractParseTreeVisitor\<T> implements <file.grammarName>Visitor\<T> {
++public class <file.grammarName>BaseVisitor\<T, P> extends AbstractParseTreeVisitor\<T, P> implements <file.grammarName>Visitor\<T, P> {
+ 	<file.visitorNames:{lname |
+ /**
+  * {@inheritDoc\}
+@@ -210,7 +211,7 @@ public class <file.grammarName>BaseVisitor\<T> extends AbstractParseTreeVisitor\
+  * \<p>The default implementation returns the result of calling
+  * {@link #visitChildren\} on {@code ctx\}.\</p>
+  */
+-@Override public T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx) { return visitChildren(ctx); \}}; separator="\n">
++@Override public T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx, P parameter) { return visitChildren((RuleNode\<P>)ctx, parameter); \}}; separator="\n">
+ }
+ >>
+ 
+@@ -224,7 +225,7 @@ Parser(parser, funcs, atn, sempredFuncs, superClass) ::= <<
+ 
+ Parser_(parser, funcs, atn, sempredFuncs, ctor, superClass) ::= <<
+ @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
+-public class <parser.name> extends <superClass; null="Parser"> {
++public class <parser.name>\<P> extends <superClass; null="Parser"> {
+ 	static { RuntimeMetaData.checkVersion("<file.ANTLRVersion>", RuntimeMetaData.VERSION); }
+ 
+ 	protected static final DFA[] _decisionToDFA;
+@@ -391,8 +392,8 @@ RuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,namedActions,fina
+ <ruleCtx>
+ <altLabelCtxs:{l | <altLabelCtxs.(l)>}; separator="\n">
+ 
+-<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType> <currentRule.name>(<args; separator=",">) throws RecognitionException {
+-	<currentRule.ctxType> _localctx = new <currentRule.ctxType>(_ctx, getState()<currentRule.args:{a | , <a.name>}>);
++<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType>\<P> <currentRule.name>(<args; separator=",">) throws RecognitionException {
++	<currentRule.ctxType> _localctx = new <currentRule.ctxType>((ParserRuleContext\<?>) _ctx, getState()<currentRule.args:{a | , <a.name>}>);
+ 	enterRule(_localctx, <currentRule.startState>, RULE_<currentRule.name>);
+ 	<namedActions.init>
+ 	<locals; separator="\n">
+@@ -428,15 +429,15 @@ LeftRecursiveRuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,
+ <ruleCtx>
+ <altLabelCtxs:{l | <altLabelCtxs.(l)>}; separator="\n">
+ 
+-<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType> <currentRule.name>(<args; separator=", ">) throws RecognitionException {
++<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType>\<P> <currentRule.name>(<args; separator=", ">) throws RecognitionException {
+ 	return <currentRule.name>(0<currentRule.args:{a | , <a.name>}>);
+ }
+ 
+-private <currentRule.ctxType> <currentRule.name>(int _p<args:{a | , <a>}>) throws RecognitionException {
++private <currentRule.ctxType>\<P> <currentRule.name>(int _p<args:{a | , <a>}>) throws RecognitionException {
+ 	ParserRuleContext _parentctx = _ctx;
+ 	int _parentState = getState();
+-	<currentRule.ctxType> _localctx = new <currentRule.ctxType>(_ctx, _parentState<currentRule.args:{a | , <a.name>}>);
+-	<currentRule.ctxType> _prevctx = _localctx;
++	<currentRule.ctxType>\<P> _localctx = new <currentRule.ctxType>(_ctx, _parentState<currentRule.args:{a | , <a.name>}>);
++	<currentRule.ctxType>\<P> _prevctx = _localctx;
+ 	int _startState = <currentRule.startState>;
+ 	enterRecursionRule(_localctx, <currentRule.startState>, RULE_<currentRule.name>, _p);
+ 	<namedActions.init>
+@@ -782,18 +783,18 @@ CaptureNextTokenType(d) ::= "<d.varName> = _input.LA(1);"
+ 
+ StructDecl(struct,ctorAttrs,attrs,getters,dispatchMethods,interfaces,extensionMembers)
+ 	::= <<
+-public static class <struct.name> extends <if(contextSuperClass)><contextSuperClass><else>ParserRuleContext<endif><if(interfaces)> implements <interfaces; separator=", "><endif> {
++public static class <struct.name>\<P> extends <if(contextSuperClass)><contextSuperClass><else>ParserRuleContext\<P><endif><if(interfaces)> implements <interfaces; separator=", "><endif> {
+ 	<attrs:{a | public <a>;}; separator="\n">
+ 	<getters:{g | <g>}; separator="\n">
+-	<if(ctorAttrs)>public <struct.name>(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }<endif>
+-	public <struct.name>(ParserRuleContext parent, int invokingState<ctorAttrs:{a | , <a>}>) {
++	<if(ctorAttrs)>public <struct.name>(ParserRuleContext\<P> parent, int invokingState) { super(parent, invokingState); }<endif>
++	public <struct.name>(ParserRuleContext\<P> parent, int invokingState<ctorAttrs:{a | , <a>}>) {
+ 		super(parent, invokingState);
+ 		<struct.ctorAttrs:{a | this.<a.name> = <a.name>;}; separator="\n">
+ 	}
+ 	@Override public int getRuleIndex() { return RULE_<struct.derivedFromName>; }
+ <if(struct.provideCopyFrom)> <! don't need copy unless we have subclasses !>
+ 	public <struct.name>() { }
+-	public void copyFrom(<struct.name> ctx) {
++	public void copyFrom(<struct.name>\<P> ctx) {
+ 		super.copyFrom(ctx);
+ 		<struct.attrs:{a | this.<a.name> = ctx.<a.name>;}; separator="\n">
+ 	}
+@@ -804,7 +805,7 @@ public static class <struct.name> extends <if(contextSuperClass)><contextSuperCl
+ >>
+ 
+ AltLabelStructDecl(struct,attrs,getters,dispatchMethods) ::= <<
+-public static class <struct.name> extends <currentRule.name; format="cap">Context {
++public static class <struct.name>\<P> extends <currentRule.name; format="cap">Context\<P> {
+ 	<attrs:{a | public <a>;}; separator="\n">
+ 	<getters:{g | <g>}; separator="\n">
+ 	public <struct.name>(<currentRule.name; format="cap">Context ctx) { copyFrom(ctx); }
+@@ -821,9 +822,9 @@ public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener lis
+ 
+ VisitorDispatchMethod(method) ::= <<
+ @Override
+-public \<T> T accept(ParseTreeVisitor\<? extends T> visitor) {
+-	if ( visitor instanceof <parser.grammarName>Visitor ) return ((<parser.grammarName>Visitor\<? extends T>)visitor).visit<struct.derivedFromName; format="cap">(this);
+-	else return visitor.visitChildren(this);
++public \<T> T accept(ParseTreeVisitor\<? extends T, P> visitor, P parameter) {
++	if ( visitor instanceof <parser.grammarName>Visitor ) return ((<parser.grammarName>Visitor\<T, P>)visitor).visit<struct.derivedFromName; format="cap">((<struct.name>\<P>)this, parameter);
++	else return visitor.visitChildren((RuleNode\<P>) this, parameter);
+ }
+ >>
+ 

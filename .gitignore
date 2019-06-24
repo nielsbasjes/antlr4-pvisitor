@@ -43,6 +43,7 @@ __*
 # Patches related
 *.patch
 *.diff
+!antlr4-pvisitor/ChangedMadeToTheOriginalANTLR4Files.diff
 *.orig
 *.rej
 
