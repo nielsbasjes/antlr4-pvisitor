@@ -4,10 +4,12 @@ import nl.example.demo.ExpressionParser.ExpressionContext;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.misc.Pair;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Demo extends ExpressionBaseVisitor<String, String> {
+public class Demo extends ExpressionBaseVisitor<Void, Pair<Long, String>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Demo.class);
 
@@ -23,28 +25,48 @@ public class Demo extends ExpressionBaseVisitor<String, String> {
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-        ExpressionParser<String> parser = new ExpressionParser<>(tokens);
+        ExpressionParser<Pair<Long, String>> parser = new ExpressionParser<>(tokens);
 
-        ExpressionContext<String>         expressionContext = parser.expression();
-        ExpressionVisitor<String, String> visitor           = new Demo();
-        visitor.visit(expressionContext, demoExpression);
+        ExpressionContext<Pair<Long, String>>         expressionContext = parser.expression();
+        ExpressionVisitor<Void, Pair<Long, String>> visitor           = new Demo();
+        visitor.visit(expressionContext, new Pair<>(1L, "1"));
     }
 
     @Override
-    public String visitNumber(ExpressionParser.NumberContext<String> ctx, String parameter) {
-        LOG.info("NUM: {} --> {}", parameter, ctx.getText());
-        return visitChildren(ctx, parameter + " --> " + ctx.getText());
+    public Void visitNumber(ExpressionParser.NumberContext<Pair<Long, String>> ctx, Pair<Long, String> parameter) {
+        Long count = parameter.a;
+        String path = parameter.b;
+        LOG.info("NUM: {} \t\t\t\t\t: {}", path, ctx.getText());
+        count++;
+        path += " --> " + count;
+        return visitChildren(ctx, new Pair<>(count, path));
     }
 
     @Override
-    public String visitSumNumbers(ExpressionParser.SumNumbersContext<String> ctx, String parameter) {
-        LOG.info("SUM: {} --> {}", parameter, ctx.getText());
-        return visitChildren(ctx, parameter + " --> " + ctx.getText());
+    public Void visitSumNumbers(ExpressionParser.SumNumbersContext<Pair<Long, String>> ctx, Pair<Long, String> parameter) {
+        Long count = parameter.a;
+        String path = parameter.b;
+        LOG.info("SUM: {} \t\t\t\t\t: {}", path, ctx.getText());
+        count++;
+        path += " --> " + count;
+        return visitChildren(ctx, new Pair<>(count, path));
     }
 
     @Override
-    public String visitBracedExpression(ExpressionParser.BracedExpressionContext<String> ctx, String parameter) {
-        LOG.info("BRA: {} --> {}", parameter, ctx.getText());
-        return visitChildren(ctx, parameter + " --> " + ctx.getText());
+    public Void visitBracedExpression(ExpressionParser.BracedExpressionContext<Pair<Long, String>> ctx, Pair<Long, String> parameter) {
+        Long count = parameter.a;
+        String path = parameter.b;
+        LOG.info("BRA: {} \t\t\t\t\t: {}", path, ctx.getText());
+        count++;
+        path += " --> " + count;
+        return visitChildren(ctx, new Pair<>(count, path));
     }
+
+//    @Override
+//    public Void visitTerminal(TerminalNode<Pair<Long, String>> node, Pair<Long, String> parameter) {
+//        Long count = parameter.a;
+//        String path = parameter.b;
+//        LOG.info("---: {} \t\t\t\t\t: {}", path, node.getText());
+//        return null;
+//    }
 }
