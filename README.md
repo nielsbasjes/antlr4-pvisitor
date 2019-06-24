@@ -27,13 +27,15 @@ Seems to work on my machine, it will most likely melt yours.
 This project is essentially a relatively simple (but not backward compatible!) change of the existing Antlr 4.7.2 code.
 
 These files are simply some of the original Antlr4 files with a generic added here and there.
-So this >99% a 1-on-1 copy of the Antlr4 code.
+
+So this is >99% a 1-on-1 copy of the Antlr4 code.
 
     Copyright (c) 2012-2017 The ANTLR Project. All rights reserved.
     Use of this file is governed by the BSD 3-clause license that
     can be found in the LICENSE.txt file in the project root.
 
 The mentioned LICENSE.txt is part of this project.
+
 I put these trivial modifications under the exact same license.
 
     Copyright (c) 2019 Niels Basjes. All rights reserved.
