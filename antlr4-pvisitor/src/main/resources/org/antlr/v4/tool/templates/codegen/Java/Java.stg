@@ -170,7 +170,7 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  * @param \<T> The return type of the visit operation. Use {@link Void} for
  * operations with no return type.
  */
-public interface <file.grammarName>Visitor\<T> extends ParseTreeVisitor\<T> {
+public interface <file.grammarName>Visitor\<T, P> extends ParseTreeVisitor\<T, P> {
 	<file.visitorNames:{lname |
 /**
 <if(file.visitorLabelRuleNames.(lname))>
@@ -182,7 +182,7 @@ public interface <file.grammarName>Visitor\<T> extends ParseTreeVisitor\<T> {
  * @param ctx the parse tree
  * @return the visitor result
  */
-T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx);}; separator="\n">
+T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx, P parameter);}; separator="\n">
 }
 >>
 
@@ -193,6 +193,7 @@ package <file.genPackage>;
 <endif>
 <header>
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
+import org.antlr.v4.runtime.tree.RuleNode;
 
 /**
  * This class provides an empty implementation of {@link <file.grammarName>Visitor},
@@ -202,7 +203,7 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
  * @param \<T> The return type of the visit operation. Use {@link Void} for
  * operations with no return type.
  */
-public class <file.grammarName>BaseVisitor\<T> extends AbstractParseTreeVisitor\<T> implements <file.grammarName>Visitor\<T> {
+public class <file.grammarName>BaseVisitor\<T, P> extends AbstractParseTreeVisitor\<T, P> implements <file.grammarName>Visitor\<T, P> {
 	<file.visitorNames:{lname |
 /**
  * {@inheritDoc\}
@@ -210,7 +211,7 @@ public class <file.grammarName>BaseVisitor\<T> extends AbstractParseTreeVisitor\
  * \<p>The default implementation returns the result of calling
  * {@link #visitChildren\} on {@code ctx\}.\</p>
  */
-@Override public T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context ctx) { return visitChildren(ctx); \}}; separator="\n">
+@Override public T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx, P parameter) { return visitChildren((RuleNode\<P>)ctx, parameter); \}}; separator="\n">
 }
 >>
 
@@ -224,7 +225,7 @@ Parser(parser, funcs, atn, sempredFuncs, superClass) ::= <<
 
 Parser_(parser, funcs, atn, sempredFuncs, ctor, superClass) ::= <<
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class <parser.name> extends <superClass; null="Parser"> {
+public class <parser.name>\<P> extends <superClass; null="Parser"> {
 	static { RuntimeMetaData.checkVersion("<file.ANTLRVersion>", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -391,8 +392,8 @@ RuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,namedActions,fina
 <ruleCtx>
 <altLabelCtxs:{l | <altLabelCtxs.(l)>}; separator="\n">
 
-<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType> <currentRule.name>(<args; separator=",">) throws RecognitionException {
-	<currentRule.ctxType> _localctx = new <currentRule.ctxType>(_ctx, getState()<currentRule.args:{a | , <a.name>}>);
+<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType>\<P> <currentRule.name>(<args; separator=",">) throws RecognitionException {
+	<currentRule.ctxType> _localctx = new <currentRule.ctxType>((ParserRuleContext\<?>) _ctx, getState()<currentRule.args:{a | , <a.name>}>);
 	enterRule(_localctx, <currentRule.startState>, RULE_<currentRule.name>);
 	<namedActions.init>
 	<locals; separator="\n">
@@ -428,15 +429,15 @@ LeftRecursiveRuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,
 <ruleCtx>
 <altLabelCtxs:{l | <altLabelCtxs.(l)>}; separator="\n">
 
-<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType> <currentRule.name>(<args; separator=", ">) throws RecognitionException {
+<if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType>\<P> <currentRule.name>(<args; separator=", ">) throws RecognitionException {
 	return <currentRule.name>(0<currentRule.args:{a | , <a.name>}>);
 }
 
-private <currentRule.ctxType> <currentRule.name>(int _p<args:{a | , <a>}>) throws RecognitionException {
+private <currentRule.ctxType>\<P> <currentRule.name>(int _p<args:{a | , <a>}>) throws RecognitionException {
 	ParserRuleContext _parentctx = _ctx;
 	int _parentState = getState();
-	<currentRule.ctxType> _localctx = new <currentRule.ctxType>(_ctx, _parentState<currentRule.args:{a | , <a.name>}>);
-	<currentRule.ctxType> _prevctx = _localctx;
+	<currentRule.ctxType>\<P> _localctx = new <currentRule.ctxType>(_ctx, _parentState<currentRule.args:{a | , <a.name>}>);
+	<currentRule.ctxType>\<P> _prevctx = _localctx;
 	int _startState = <currentRule.startState>;
 	enterRecursionRule(_localctx, <currentRule.startState>, RULE_<currentRule.name>, _p);
 	<namedActions.init>
@@ -782,18 +783,18 @@ CaptureNextTokenType(d) ::= "<d.varName> = _input.LA(1);"
 
 StructDecl(struct,ctorAttrs,attrs,getters,dispatchMethods,interfaces,extensionMembers)
 	::= <<
-public static class <struct.name> extends <if(contextSuperClass)><contextSuperClass><else>ParserRuleContext<endif><if(interfaces)> implements <interfaces; separator=", "><endif> {
+public static class <struct.name>\<P> extends <if(contextSuperClass)><contextSuperClass><else>ParserRuleContext\<P><endif><if(interfaces)> implements <interfaces; separator=", "><endif> {
 	<attrs:{a | public <a>;}; separator="\n">
 	<getters:{g | <g>}; separator="\n">
-	<if(ctorAttrs)>public <struct.name>(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }<endif>
-	public <struct.name>(ParserRuleContext parent, int invokingState<ctorAttrs:{a | , <a>}>) {
+	<if(ctorAttrs)>public <struct.name>(ParserRuleContext\<P> parent, int invokingState) { super(parent, invokingState); }<endif>
+	public <struct.name>(ParserRuleContext\<P> parent, int invokingState<ctorAttrs:{a | , <a>}>) {
 		super(parent, invokingState);
 		<struct.ctorAttrs:{a | this.<a.name> = <a.name>;}; separator="\n">
 	}
 	@Override public int getRuleIndex() { return RULE_<struct.derivedFromName>; }
 <if(struct.provideCopyFrom)> <! don't need copy unless we have subclasses !>
 	public <struct.name>() { }
-	public void copyFrom(<struct.name> ctx) {
+	public void copyFrom(<struct.name>\<P> ctx) {
 		super.copyFrom(ctx);
 		<struct.attrs:{a | this.<a.name> = ctx.<a.name>;}; separator="\n">
 	}
@@ -804,7 +805,7 @@ public static class <struct.name> extends <if(contextSuperClass)><contextSuperCl
 >>
 
 AltLabelStructDecl(struct,attrs,getters,dispatchMethods) ::= <<
-public static class <struct.name> extends <currentRule.name; format="cap">Context {
+public static class <struct.name>\<P> extends <currentRule.name; format="cap">Context\<P> {
 	<attrs:{a | public <a>;}; separator="\n">
 	<getters:{g | <g>}; separator="\n">
 	public <struct.name>(<currentRule.name; format="cap">Context ctx) { copyFrom(ctx); }
@@ -821,9 +822,9 @@ public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener lis
 
 VisitorDispatchMethod(method) ::= <<
 @Override
-public \<T> T accept(ParseTreeVisitor\<? extends T> visitor) {
-	if ( visitor instanceof <parser.grammarName>Visitor ) return ((<parser.grammarName>Visitor\<? extends T>)visitor).visit<struct.derivedFromName; format="cap">(this);
-	else return visitor.visitChildren(this);
+public \<T> T accept(ParseTreeVisitor\<? extends T, P> visitor, P parameter) {
+	if ( visitor instanceof <parser.grammarName>Visitor ) return ((<parser.grammarName>Visitor\<T, P>)visitor).visit<struct.derivedFromName; format="cap">((<struct.name>\<P>)this, parameter);
+	else return visitor.visitChildren((RuleNode\<P>) this, parameter);
 }
 >>
 

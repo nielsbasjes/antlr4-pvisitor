@@ -11,23 +11,23 @@ import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Interval;
 
-public class TerminalNodeImpl implements TerminalNode {
-	public Token symbol;
-	public ParseTree parent;
+public class TerminalNodeImpl<P> implements TerminalNode<P> {
+	public Token        symbol;
+	public ParseTree<P> parent;
 
 	public TerminalNodeImpl(Token symbol) {	this.symbol = symbol;	}
 
 	@Override
-	public ParseTree getChild(int i) {return null;}
+	public ParseTree<P> getChild(int i) {return null;}
 
 	@Override
 	public Token getSymbol() {return symbol;}
 
 	@Override
-	public ParseTree getParent() { return parent; }
+	public ParseTree<P> getParent() { return parent; }
 
 	@Override
-	public void setParent(RuleContext parent) {
+	public void setParent(RuleContext<P> parent) {
 		this.parent = parent;
 	}
 
@@ -46,8 +46,8 @@ public class TerminalNodeImpl implements TerminalNode {
 	public int getChildCount() { return 0; }
 
 	@Override
-	public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-		return visitor.visitTerminal(this);
+	public <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) {
+		return visitor.visitTerminal(this, parameter);
 	}
 
 	@Override

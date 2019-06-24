@@ -6,7 +6,7 @@
 
 package org.antlr.v4.runtime.tree;
 
-public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T> {
+public abstract class AbstractParseTreeVisitor<T, P> implements ParseTreeVisitor<T, P> {
 	/**
 	 * {@inheritDoc}
 	 *
@@ -14,8 +14,8 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
 	 * specified tree.</p>
 	 */
 	@Override
-	public T visit(ParseTree tree) {
-		return tree.accept(this);
+	public T visit(ParseTree<P> tree, P parameter) {
+		return tree.accept(this, parameter);
 	}
 
 	/**
@@ -34,7 +34,7 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
 	 * method to behave properly in respect to the specific algorithm in use.</p>
 	 */
 	@Override
-	public T visitChildren(RuleNode node) {
+	public T visitChildren(RuleNode<P> node, P parameter) {
 		T result = defaultResult();
 		int n = node.getChildCount();
 		for (int i=0; i<n; i++) {
@@ -42,8 +42,8 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
 				break;
 			}
 
-			ParseTree c = node.getChild(i);
-			T childResult = c.accept(this);
+			ParseTree<P> c = node.getChild(i);
+			T childResult = c.accept(this, parameter);
 			result = aggregateResult(result, childResult);
 		}
 
@@ -57,7 +57,7 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
 	 * {@link #defaultResult defaultResult}.</p>
 	 */
 	@Override
-	public T visitTerminal(TerminalNode node) {
+	public T visitTerminal(TerminalNode<P> node, P parameter) {
 		return defaultResult();
 	}
 
@@ -68,7 +68,7 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
 	 * {@link #defaultResult defaultResult}.</p>
 	 */
 	@Override
-	public T visitErrorNode(ErrorNode node) {
+	public T visitErrorNode(ErrorNode<P> node, P parameter) {
 		return defaultResult();
 	}
 
@@ -134,7 +134,7 @@ public abstract class AbstractParseTreeVisitor<T> implements ParseTreeVisitor<T>
 	 * {@code false} to stop visiting children and immediately return the
 	 * current aggregate result from {@link #visitChildren}.
 	 */
-	protected boolean shouldVisitNextChild(RuleNode node, T currentResult) {
+	protected boolean shouldVisitNextChild(RuleNode<P> node, T currentResult) {
 		return true;
 	}
 

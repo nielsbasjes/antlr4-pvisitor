@@ -65,11 +65,11 @@ import java.util.List;
  *
  *  @see ParserRuleContext
  */
-public class RuleContext implements RuleNode {
-	public static final ParserRuleContext EMPTY = new ParserRuleContext();
+public class RuleContext<P> implements RuleNode<P> {
+	public static final ParserRuleContext EMPTY = new ParserRuleContext<>();
 
 	/** What context invoked this rule? */
-	public RuleContext parent;
+	public RuleContext<P> parent;
 
 	/** What state invoked the rule associated with this context?
 	 *  The "return address" is the followState of invokingState
@@ -80,7 +80,7 @@ public class RuleContext implements RuleNode {
 
 	public RuleContext() {}
 
-	public RuleContext(RuleContext parent, int invokingState) {
+	public RuleContext(RuleContext<P> parent, int invokingState) {
 		this.parent = parent;
 		//if ( parent!=null ) System.out.println("invoke "+stateNumber+" from "+parent);
 		this.invokingState = invokingState;
@@ -88,7 +88,7 @@ public class RuleContext implements RuleNode {
 
 	public int depth() {
 		int n = 0;
-		RuleContext p = this;
+		RuleContext<P> p = this;
 		while ( p!=null ) {
 			p = p.parent;
 			n++;
@@ -111,13 +111,13 @@ public class RuleContext implements RuleNode {
 	}
 
 	@Override
-	public RuleContext getRuleContext() { return this; }
+	public RuleContext<P> getRuleContext() { return this; }
 
 	@Override
-	public RuleContext getParent() { return parent; }
+	public RuleContext<P> getParent() { return parent; }
 
 	@Override
-	public RuleContext getPayload() { return this; }
+	public RuleContext<P> getPayload() { return this; }
 
 	/** Return the combined text of all child nodes. This method only considers
 	 *  tokens which have been added to the parse tree.
@@ -165,12 +165,12 @@ public class RuleContext implements RuleNode {
 
 	/** @since 4.7. {@see ParseTree#setParent} comment */
 	@Override
-	public void setParent(RuleContext parent) {
+	public void setParent(RuleContext<P> parent) {
 		this.parent = parent;
 	}
 
 	@Override
-	public ParseTree getChild(int i) {
+	public ParseTree<P> getChild(int i) {
 		return null;
 	}
 
@@ -180,7 +180,7 @@ public class RuleContext implements RuleNode {
 	}
 
 	@Override
-	public <T> T accept(ParseTreeVisitor<? extends T> visitor) { return visitor.visitChildren(this); }
+	public <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) { return visitor.visitChildren(this, parameter); }
 
 	/** Print out a whole tree, not just a node, in LISP format
 	 *  (root child1 .. childN). Print just a node if this is a leaf.
@@ -205,11 +205,12 @@ public class RuleContext implements RuleNode {
 
 	@Override
 	public String toString() {
-		return toString((List<String>)null, (RuleContext)null);
+		return toString((List<String>)null, null);
 	}
 
+	@SuppressWarnings("unchecked")
 	public final String toString(Recognizer<?,?> recog) {
-		return toString(recog, ParserRuleContext.EMPTY);
+		return toString(recog, (ParserRuleContext<P>)ParserRuleContext.EMPTY);
 	}
 
 	public final String toString(List<String> ruleNames) {
@@ -217,15 +218,15 @@ public class RuleContext implements RuleNode {
 	}
 
 	// recog null unless ParserRuleContext, in which case we use subclass toString(...)
-	public String toString(Recognizer<?,?> recog, RuleContext stop) {
+	public String toString(Recognizer<?,?> recog, RuleContext<P> stop) {
 		String[] ruleNames = recog != null ? recog.getRuleNames() : null;
 		List<String> ruleNamesList = ruleNames != null ? Arrays.asList(ruleNames) : null;
 		return toString(ruleNamesList, stop);
 	}
 
-	public String toString(List<String> ruleNames, RuleContext stop) {
+	public String toString(List<String> ruleNames, RuleContext<P> stop) {
 		StringBuilder buf = new StringBuilder();
-		RuleContext p = this;
+		RuleContext<P> p = this;
 		buf.append("[");
 		while (p != null && p != stop) {
 			if (ruleNames == null) {

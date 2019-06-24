@@ -6,5 +6,5 @@
 
 package org.antlr.v4.runtime.tree;
 
-public interface ErrorNode extends TerminalNode {
+public interface ErrorNode<P> extends TerminalNode<P> {
 }

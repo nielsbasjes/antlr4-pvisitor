@@ -17,12 +17,12 @@ import org.antlr.v4.runtime.Token;
  *
  *  <p>The payload is either a {@link Token} or a {@link RuleContext} object.</p>
  */
-public interface ParseTree extends SyntaxTree {
+public interface ParseTree<P> extends SyntaxTree {
 	// the following methods narrow the return type; they are not additional methods
 	@Override
-	ParseTree getParent();
+	ParseTree<P> getParent();
 	@Override
-	ParseTree getChild(int i);
+	ParseTree<P> getChild(int i);
 
 
 	/** Set the parent for this node.
@@ -40,10 +40,10 @@ public interface ParseTree extends SyntaxTree {
 	 *
 	 *  @since 4.7
 	 */
-	void setParent(RuleContext parent);
+	void setParent(RuleContext<P> parent);
 
 	/** The {@link ParseTreeVisitor} needs a double dispatch method. */
-	<T> T accept(ParseTreeVisitor<? extends T> visitor);
+	default <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) { return null; }
 
 	/** Return the combined text of all leaf nodes. Does not get any
 	 *  off-channel tokens (if any) so won't return whitespace and

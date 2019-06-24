@@ -14,13 +14,14 @@ import org.antlr.v4.runtime.Token;
  *  and deletion as well as during "consume until error recovery set"
  *  upon no viable alternative exceptions.
  */
-public class ErrorNodeImpl extends TerminalNodeImpl implements ErrorNode {
+public class ErrorNodeImpl<P> extends TerminalNodeImpl<P> implements ErrorNode<P> {
 	public ErrorNodeImpl(Token token) {
 		super(token);
 	}
 
 	@Override
-	public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-		return visitor.visitErrorNode(this);
+	public <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) {
+		return visitor.visitErrorNode(this, parameter);
 	}
+
 }

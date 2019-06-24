@@ -39,14 +39,14 @@ import java.util.List;
  *  group values such as this aggregate.  The getters/setters are there to
  *  satisfy the superclass interface.
  */
-public class ParserRuleContext extends RuleContext {
+public class ParserRuleContext<P> extends RuleContext<P> {
 	/** If we are debugging or building a parse tree for a visitor,
 	 *  we need to track all of the tokens and rule invocations associated
 	 *  with this rule's context. This is empty for parsing w/o tree constr.
 	 *  operation because we don't the need to track the details about
 	 *  how we parse this rule.
 	 */
-	public List<ParseTree> children;
+	public List<ParseTree<P>> children;
 
 	/** For debugging/tracing purposes, we want to track all of the nodes in
 	 *  the ATN traversed by the parser for a particular rule.
@@ -90,7 +90,7 @@ public class ParserRuleContext extends RuleContext {
 	 *  to the generic XContext so this function must copy those nodes to
 	 *  the YContext as well else they are lost!
 	 */
-	public void copyFrom(ParserRuleContext ctx) {
+	public void copyFrom(ParserRuleContext<P> ctx) {
 		this.parent = ctx.parent;
 		this.invokingState = ctx.invokingState;
 
@@ -101,15 +101,15 @@ public class ParserRuleContext extends RuleContext {
 		if ( ctx.children!=null ) {
 			this.children = new ArrayList<>();
 			// reset parent pointer for any error nodes
-			for (ParseTree child : ctx.children) {
+			for (ParseTree<P> child : ctx.children) {
 				if ( child instanceof ErrorNode ) {
-					addChild((ErrorNode)child);
+					addChild((ErrorNode<P>)child);
 				}
 			}
 		}
 	}
 
-	public ParserRuleContext(ParserRuleContext parent, int invokingStateNumber) {
+	public ParserRuleContext(ParserRuleContext<P> parent, int invokingStateNumber) {
 		super(parent, invokingStateNumber);
 	}
 
@@ -129,18 +129,18 @@ public class ParserRuleContext extends RuleContext {
 	 *
 	 *  @since 4.7
 	 */
-	public <T extends ParseTree> T addAnyChild(T t) {
+	public <T extends ParseTree<P>> T addAnyChild(T t) {
 		if ( children==null ) children = new ArrayList<>();
 		children.add(t);
 		return t;
 	}
 
-	public RuleContext addChild(RuleContext ruleInvocation) {
+	public RuleContext<P> addChild(RuleContext<P> ruleInvocation) {
 		return addAnyChild(ruleInvocation);
 	}
 
 	/** Add a token leaf node child and force its parent to be this node. */
-	public TerminalNode addChild(TerminalNode t) {
+	public TerminalNode<P> addChild(TerminalNode<P> t) {
 		t.setParent(this);
 		return addAnyChild(t);
 	}
@@ -149,7 +149,7 @@ public class ParserRuleContext extends RuleContext {
 	 *
 	 * @since 4.7
 	 */
-	public ErrorNode addErrorNode(ErrorNode errorNode) {
+	public ErrorNode<P> addErrorNode(ErrorNode<P> errorNode) {
 		errorNode.setParent(this);
 		return addAnyChild(errorNode);
 	}
@@ -160,8 +160,8 @@ public class ParserRuleContext extends RuleContext {
      *  in for compatibility but the parser doesn't use this anymore.
 	 */
 	@Deprecated
-	public TerminalNode addChild(Token matchedToken) {
-		TerminalNodeImpl t = new TerminalNodeImpl(matchedToken);
+	public TerminalNode<P> addChild(Token matchedToken) {
+		TerminalNodeImpl<P> t = new TerminalNodeImpl<>(matchedToken);
 		addAnyChild(t);
 		t.setParent(this);
 		return t;
@@ -174,7 +174,7 @@ public class ParserRuleContext extends RuleContext {
 	 */
 	@Deprecated
 	public ErrorNode addErrorNode(Token badToken) {
-		ErrorNodeImpl t = new ErrorNodeImpl(badToken);
+		ErrorNodeImpl<P> t = new ErrorNodeImpl<>(badToken);
 		addAnyChild(t);
 		t.setParent(this);
 		return t;
@@ -197,12 +197,12 @@ public class ParserRuleContext extends RuleContext {
 
 	@Override
 	/** Override to make type more specific */
-	public ParserRuleContext getParent() {
-		return (ParserRuleContext)super.getParent();
+	public ParserRuleContext<P> getParent() {
+		return (ParserRuleContext<P>)super.getParent();
 	}
 
 	@Override
-	public ParseTree getChild(int i) {
+	public ParseTree<P> getChild(int i) {
 		return children!=null && i>=0 && i<children.size() ? children.get(i) : null;
 	}
 
@@ -257,7 +257,7 @@ public class ParserRuleContext extends RuleContext {
 				Token symbol = tnode.getSymbol();
 				if ( symbol.getType()==ttype ) {
 					if ( tokens==null ) {
-						tokens = new ArrayList<TerminalNode>();
+						tokens = new ArrayList<>();
 					}
 					tokens.add(tnode);
 				}
@@ -284,7 +284,7 @@ public class ParserRuleContext extends RuleContext {
 		for (ParseTree o : children) {
 			if ( ctxType.isInstance(o) ) {
 				if ( contexts==null ) {
-					contexts = new ArrayList<T>();
+					contexts = new ArrayList<>();
 				}
 
 				contexts.add(ctxType.cast(o));
