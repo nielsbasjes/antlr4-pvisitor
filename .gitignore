@@ -1,12 +1,58 @@
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
+#Antlr4
+gen
 
-# Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
-!/.mvn/wrapper/maven-wrapper.jar
+#Maven
+dependency-reduced-pom.xml
+
+#Crashing eclipse
+hs_err_pid*.log
+tmp
+debug-output
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+target
+*.bak
+*.swp
+*~
+bin
+
+#Eclipse stuff
+.metadata
+.settings
+.classpath
+.project
+
+#IntelliJ stuff
+.idea
+*.iml
+
+#test files
+x
+xx
+y
+yy
+z
+zz
+result-*.yaml
+__*
+
+# Patches related
+*.patch
+*.diff
+*.orig
+*.rej
+
+# Apache Pig logfiles
+pig_[1-9][0-9]*.log
+
+# Local test files and scripts
+testfiles
+*.tar.gz
+
+# LibreOffice lock file
+.~lock.*
+
