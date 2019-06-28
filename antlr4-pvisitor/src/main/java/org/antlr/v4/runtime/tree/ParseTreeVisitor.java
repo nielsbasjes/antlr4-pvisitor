@@ -22,6 +22,7 @@ public interface ParseTreeVisitor<T, P> {
 	 * @param tree The {@link ParseTree} to visit.
 	 * @return The result of visiting the parse tree.
 	 */
+	T visit(ParseTree<P> tree);
 	T visit(ParseTree<P> tree, P parameter);
 
 	/**
@@ -31,6 +32,7 @@ public interface ParseTreeVisitor<T, P> {
 	 * @param node The {@link RuleNode} whose children should be visited.
 	 * @return The result of visiting the children of the node.
 	 */
+	T visitChildren(RuleNode<P> node);
 	T visitChildren(RuleNode<P> node, P parameter);
 
 	/**
@@ -39,6 +41,7 @@ public interface ParseTreeVisitor<T, P> {
 	 * @param node The {@link TerminalNode} to visit.
 	 * @return The result of visiting the node.
 	 */
+	T visitTerminal(TerminalNode<P> node);
 	T visitTerminal(TerminalNode<P> node, P parameter);
 
 	/**
@@ -47,6 +50,7 @@ public interface ParseTreeVisitor<T, P> {
 	 * @param node The {@link ErrorNode} to visit.
 	 * @return The result of visiting the node.
 	 */
+	T visitErrorNode(ErrorNode<P> node);
 	T visitErrorNode(ErrorNode<P> node, P parameter);
 
 }

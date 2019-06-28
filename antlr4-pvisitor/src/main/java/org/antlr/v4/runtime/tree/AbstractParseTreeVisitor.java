@@ -14,6 +14,10 @@ public abstract class AbstractParseTreeVisitor<T, P> implements ParseTreeVisitor
 	 * specified tree.</p>
 	 */
 	@Override
+	public T visit(ParseTree<P> tree) {
+		return tree.accept(this);
+	}
+	@Override
 	public T visit(ParseTree<P> tree, P parameter) {
 		return tree.accept(this, parameter);
 	}
@@ -33,6 +37,22 @@ public abstract class AbstractParseTreeVisitor<T, P> implements ParseTreeVisitor
 	 * the tree structure. Visitors that modify the tree should override this
 	 * method to behave properly in respect to the specific algorithm in use.</p>
 	 */
+	@Override
+	public T visitChildren(RuleNode<P> node) {
+		T result = defaultResult();
+		int n = node.getChildCount();
+		for (int i=0; i<n; i++) {
+			if (!shouldVisitNextChild(node, result)) {
+				break;
+			}
+
+			ParseTree<P> c = node.getChild(i);
+			T childResult = c.accept(this);
+			result = aggregateResult(result, childResult);
+		}
+
+		return result;
+	}
 	@Override
 	public T visitChildren(RuleNode<P> node, P parameter) {
 		T result = defaultResult();
@@ -57,6 +77,10 @@ public abstract class AbstractParseTreeVisitor<T, P> implements ParseTreeVisitor
 	 * {@link #defaultResult defaultResult}.</p>
 	 */
 	@Override
+	public T visitTerminal(TerminalNode<P> node) {
+		return defaultResult();
+	}
+	@Override
 	public T visitTerminal(TerminalNode<P> node, P parameter) {
 		return defaultResult();
 	}
@@ -67,6 +91,10 @@ public abstract class AbstractParseTreeVisitor<T, P> implements ParseTreeVisitor
 	 * <p>The default implementation returns the result of
 	 * {@link #defaultResult defaultResult}.</p>
 	 */
+	@Override
+	public T visitErrorNode(ErrorNode<P> node) {
+		return defaultResult();
+	}
 	@Override
 	public T visitErrorNode(ErrorNode<P> node, P parameter) {
 		return defaultResult();

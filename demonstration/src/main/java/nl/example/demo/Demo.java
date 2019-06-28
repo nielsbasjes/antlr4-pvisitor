@@ -9,6 +9,8 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class Demo extends ExpressionBaseVisitor<Void, Pair<Long, String>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(Demo.class);
@@ -42,6 +44,7 @@ public class Demo extends ExpressionBaseVisitor<Void, Pair<Long, String>> {
         return visitChildren(ctx, new Pair<>(count, path));
     }
 
+    @SuppressWarnings("unused")
     @Override
     public Void visitSumNumbers(ExpressionParser.SumNumbersContext<Pair<Long, String>> ctx, Pair<Long, String> parameter) {
         Long count = parameter.a;
@@ -49,6 +52,11 @@ public class Demo extends ExpressionBaseVisitor<Void, Pair<Long, String>> {
         LOG.info("SUM: {} \t\t\t\t\t: {}", path, ctx.getText());
         count++;
         path += " --> " + count;
+        ExpressionContext<Pair<Long, String>>       expression1 = ctx.num1;
+        ExpressionContext<Pair<Long, String>>       expression2 = ctx.num2;
+        TerminalNode<Pair<Long, String>>            plus        = ctx.PLUS();
+        List<ExpressionContext<Pair<Long, String>>> expressions = ctx.expression();
+
         return visitChildren(ctx, new Pair<>(count, path));
     }
 
@@ -59,7 +67,9 @@ public class Demo extends ExpressionBaseVisitor<Void, Pair<Long, String>> {
         LOG.info("BRA: {} \t\t\t\t\t: {}", path, ctx.getText());
         count++;
         path += " --> " + count;
+
         return visitChildren(ctx, new Pair<>(count, path));
+
     }
 
 //    @Override

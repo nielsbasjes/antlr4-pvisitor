@@ -245,12 +245,12 @@ public class ParserRuleContext<P> extends RuleContext<P> {
 		return null;
 	}
 
-	public List<TerminalNode> getTokens(int ttype) {
+	public List<TerminalNode<P>> getTokens(int ttype) {
 		if ( children==null ) {
 			return Collections.emptyList();
 		}
 
-		List<TerminalNode> tokens = null;
+		List<TerminalNode<P>> tokens = null;
 		for (ParseTree o : children) {
 			if ( o instanceof TerminalNode ) {
 				TerminalNode tnode = (TerminalNode)o;
@@ -275,13 +275,13 @@ public class ParserRuleContext<P> extends RuleContext<P> {
 		return getChild(ctxType, i);
 	}
 
-	public <T extends ParserRuleContext> List<T> getRuleContexts(Class<? extends T> ctxType) {
+	public <T extends ParserRuleContext<P>> List<T> getRuleContexts(Class<T> ctxType) {
 		if ( children==null ) {
 			return Collections.emptyList();
 		}
 
 		List<T> contexts = null;
-		for (ParseTree o : children) {
+		for (ParseTree<P> o : children) {
 			if ( ctxType.isInstance(o) ) {
 				if ( contexts==null ) {
 					contexts = new ArrayList<>();
@@ -334,5 +334,22 @@ public class ParserRuleContext<P> extends RuleContext<P> {
 			", stop=" + stop +
 			'}';
 	}
+
+
+	// FIXME: Niels Hack
+	public String toString(){
+		if (start == null || stop == null) {
+			return getText();
+		}
+		int startIndex = start.getStartIndex();
+		int stopIndex = stop.getStopIndex();
+		if (stopIndex < startIndex) {
+			return ""; // Just return the empty string.
+		}
+		CharStream inputStream = start.getInputStream();
+		return inputStream.getText(new Interval(startIndex, stopIndex));
+	}
+
+
 }
 

@@ -43,6 +43,7 @@ public interface ParseTree<P> extends SyntaxTree {
 	void setParent(RuleContext<P> parent);
 
 	/** The {@link ParseTreeVisitor} needs a double dispatch method. */
+	default <T> T accept(ParseTreeVisitor<? extends T, P> visitor) { return null; }
 	default <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) { return null; }
 
 	/** Return the combined text of all leaf nodes. Does not get any
