@@ -27,9 +27,9 @@ public class Demo extends ExpressionBaseVisitor<Void, Pair<Long, String>> {
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-        ExpressionParser<Pair<Long, String>> parser = new ExpressionParser<>(tokens);
+        ExpressionParser<?> parser = new ExpressionParser<>(tokens);
 
-        ExpressionContext<Pair<Long, String>>         expressionContext = parser.expression();
+        ExpressionContext<Pair<Long, String>>         expressionContext = ((ExpressionParser<Pair<Long, String>>)parser).expression();
         ExpressionVisitor<Void, Pair<Long, String>> visitor           = new Demo();
         visitor.visit(expressionContext, new Pair<>(1L, "1"));
     }

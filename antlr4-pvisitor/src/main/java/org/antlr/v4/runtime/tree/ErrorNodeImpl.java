@@ -20,6 +20,10 @@ public class ErrorNodeImpl<P> extends TerminalNodeImpl<P> implements ErrorNode<P
 	}
 
 	@Override
+	public <T> T accept(ParseTreeVisitor<? extends T, P> visitor) {
+		return visitor.visitErrorNode(this);
+	}
+	@Override
 	public <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) {
 		return visitor.visitErrorNode(this, parameter);
 	}
