@@ -173,7 +173,7 @@ public class ParserRuleContext<P> extends RuleContext<P> {
 	 *  in for compatibility but the parser doesn't use this anymore.
 	 */
 	@Deprecated
-	public ErrorNode addErrorNode(Token badToken) {
+	public ErrorNode<P> addErrorNode(Token badToken) {
 		ErrorNodeImpl<P> t = new ErrorNodeImpl<>(badToken);
 		addAnyChild(t);
 		t.setParent(this);
@@ -206,13 +206,13 @@ public class ParserRuleContext<P> extends RuleContext<P> {
 		return children!=null && i>=0 && i<children.size() ? children.get(i) : null;
 	}
 
-	public <T extends ParseTree> T getChild(Class<? extends T> ctxType, int i) {
+	public <T extends ParseTree<P>> T getChild(Class<? extends T> ctxType, int i) {
 		if ( children==null || i < 0 || i >= children.size() ) {
 			return null;
 		}
 
 		int j = -1; // what element have we found with ctxType?
-		for (ParseTree o : children) {
+		for (ParseTree<P> o : children) {
 			if ( ctxType.isInstance(o) ) {
 				j++;
 				if ( j == i ) {
@@ -223,15 +223,15 @@ public class ParserRuleContext<P> extends RuleContext<P> {
 		return null;
 	}
 
-	public TerminalNode getToken(int ttype, int i) {
+	public TerminalNode<P> getToken(int ttype, int i) {
 		if ( children==null || i < 0 || i >= children.size() ) {
 			return null;
 		}
 
 		int j = -1; // what token with ttype have we found?
-		for (ParseTree o : children) {
+		for (ParseTree<P> o : children) {
 			if ( o instanceof TerminalNode ) {
-				TerminalNode tnode = (TerminalNode)o;
+				TerminalNode<P> tnode = (TerminalNode<P>)o;
 				Token symbol = tnode.getSymbol();
 				if ( symbol.getType()==ttype ) {
 					j++;
@@ -251,9 +251,9 @@ public class ParserRuleContext<P> extends RuleContext<P> {
 		}
 
 		List<TerminalNode<P>> tokens = null;
-		for (ParseTree o : children) {
+		for (ParseTree<P> o : children) {
 			if ( o instanceof TerminalNode ) {
-				TerminalNode tnode = (TerminalNode)o;
+				TerminalNode<P> tnode = (TerminalNode<P>)o;
 				Token symbol = tnode.getSymbol();
 				if ( symbol.getType()==ttype ) {
 					if ( tokens==null ) {
@@ -271,7 +271,7 @@ public class ParserRuleContext<P> extends RuleContext<P> {
 		return tokens;
 	}
 
-	public <T extends ParserRuleContext> T getRuleContext(Class<? extends T> ctxType, int i) {
+	public <T extends ParserRuleContext<P>> T getRuleContext(Class<? extends T> ctxType, int i) {
 		return getChild(ctxType, i);
 	}
 
