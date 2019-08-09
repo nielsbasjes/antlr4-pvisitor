@@ -6,21 +6,19 @@ the parse tree using the visitor match my parse result against the 'pattern tree
 
 This parameter is therefor the node in the other tree.
 
-There has been discussion about such a wish before
+There has been discussion about such a wish before but those all came to the conclusion that such a feature would break backwards compatibility.
 
 https://github.com/antlr/antlr4/issues/641
 
 What this project does is simply change only the files that need to be changed and change the code generation accordingly.
 
 # This project
-I simply copy a smal number of Java files (including the Java.stg).
+I simply copied a small number of files related to the Java code generation and the related runtime (including the Java.stg).
 
 In my application I use the Java.stg to generate different application code and 
 use this as a dependency to override the official Antlr4 classes.
 
 # Current status
-Untested!
-
 Seems to work on my machine, it will most likely melt yours.
 
 # LICENSE

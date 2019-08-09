@@ -1,19 +1,8 @@
 <?xml version="1.0"?>
 <!--
-  ~ Yet Another UserAgent Analyzer
-  ~ Copyright (C) 2013-2019 Niels Basjes
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~ https://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
+  ~ ANTLR4 Parameterized Visitor
+  ~ Copyright (c) 2019 Niels Basjes. All rights reserved.
+  ~ Use of this file is governed by the BSD 3-clause license.
   -->
 
 <project
@@ -23,14 +12,12 @@
     <parent>
         <groupId>nl.basjes.antlr</groupId>
         <version>0.1-4.7.2-SNAPSHOT</version>
-        <artifactId>parameterized-visitor-parent</artifactId>
+        <artifactId>antlr4-pvisitor-parent</artifactId>
     </parent>
-    <artifactId>parameterized-visitor-demo</artifactId>
+    <artifactId>antlr4-pvisitor-demo</artifactId>
 
     <name>Antlr4 PVisitor: PVisitor demonstration</name>
     <description>A demo of the modified version of the Antlr4 Visitor.</description>
-
-    <!--  <url>https://yauaa.basjes.nl</url>-->
 
     <dependencies>
         <dependency>
@@ -100,8 +87,8 @@
 
     <licenses>
         <license>
-            <name>Apache License, Version 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>The BSD License</name>
+            <url>http://www.antlr.org/license.html</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -119,8 +106,8 @@
     </developers>
 
     <scm>
-        <url>https://yauaa.basjes.nl</url>
-        <connection>scm:git:https://github.com/nielsbasjes/yauaa.git</connection>
+        <url>https://github.com/nielsbasjes/antlr4-pvisitor</url>
+        <connection>scm:git:https://github.com/nielsbasjes/antlr4-pvisitor.git</connection>
         <developerConnection>scm:git:.</developerConnection>
     </scm>
 

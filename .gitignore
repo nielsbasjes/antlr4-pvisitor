@@ -47,9 +47,6 @@ __*
 *.orig
 *.rej
 
-# Apache Pig logfiles
-pig_[1-9][0-9]*.log
-
 # Local test files and scripts
 testfiles
 *.tar.gz
