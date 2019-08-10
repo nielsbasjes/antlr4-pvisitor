@@ -11,13 +11,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>nl.basjes.antlr</groupId>
-        <version>0.1-4.7.2-SNAPSHOT</version>
+        <version>0.1-4.7.2</version>
         <artifactId>antlr4-pvisitor-parent</artifactId>
     </parent>
     <artifactId>antlr4-pvisitor</artifactId>
 
     <name>Antlr4 PVisitor: PVisitor generator</name>
     <description>A modified version of the Antlr4 Visitor.</description>
+
+    <url>https://github.com/nielsbasjes/antlr4-pvisitor</url>
 
     <dependencies>
         <dependency>
@@ -51,7 +53,7 @@
     <licenses>
         <license>
             <name>The BSD License</name>
-            <url>http://www.antlr.org/license.html</url>
+            <url>https://www.antlr.org/license.html</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
