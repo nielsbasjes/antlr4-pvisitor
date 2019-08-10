@@ -21,6 +21,16 @@ use this as a dependency to override the official Antlr4 classes.
 # Current status
 Seems to work on my machine, it will most likely melt yours.
 
+I do have it deployed in Maven central, use at your own risk.
+
+
+    <dependency>
+        <groupId>nl.basjes.antlr</groupId>
+        <artifactId>antlr4-pvisitor</artifactId>
+        <version>0.1-4.7.2</version>
+    </dependency>
+
+
 # LICENSE
 This project is essentially a relatively simple (but not backward compatible!) change of the existing Antlr 4.7.2 code.
 
