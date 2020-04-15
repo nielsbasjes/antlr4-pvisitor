@@ -115,8 +115,11 @@ public class ParserRuleContext<P> extends RuleContext<P> {
 
 	// Double dispatch methods for listeners
 
-	public void enterRule(ParseTreeListener listener) { }
-	public void exitRule(ParseTreeListener listener) { }
+	public void enterRule(ParseTreeListener<P> listener) { }
+	public void exitRule(ParseTreeListener<P> listener) { }
+
+	public void enterRule(ParseTreeListener<P> listener, P parameter) { }
+	public void exitRule(ParseTreeListener<P> listener, P parameter) { }
 
 	/** Add a parse tree node to this as a child.  Works for
 	 *  internal and leaf nodes. Does not set parent link;

@@ -11,7 +11,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>nl.basjes.antlr</groupId>
-  <version>0.2-4.7.2-SNAPSHOT</version>
+  <version>0.2-4.8-1-SNAPSHOT</version>
   <artifactId>antlr4-pvisitor-parent</artifactId>
   <packaging>pom</packaging>
 
@@ -27,12 +27,79 @@
     <maven.compiler.source>${jdkLevel}</maven.compiler.source>
     <maven.compiler.target>${jdkLevel}</maven.compiler.target>
 
-    <antlr.version>4.7.2</antlr.version>
-    <slf4j.version>1.7.26</slf4j.version>
+    <!-- In order for everything to work correctly we need at least this version of maven. -->
+    <maven.minimal.version>3.6.0</maven.minimal.version>
 
-    <git-commit-id-plugin.version>3.0.0</git-commit-id-plugin.version>
+    <antlr.version>4.8-1</antlr.version>
+    <slf4j.version>1.7.30</slf4j.version>
+
+    <git-commit-id-plugin.version>4.0.0</git-commit-id-plugin.version>
   </properties>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin><artifactId>maven-assembly-plugin</artifactId><version>3.2.0</version></plugin>
+        <plugin><artifactId>maven-clean-plugin</artifactId><version>3.1.0</version></plugin>
+        <plugin><artifactId>maven-compiler-plugin</artifactId><version>3.8.1</version></plugin>
+        <plugin><artifactId>maven-deploy-plugin</artifactId><version>3.0.0-M1</version></plugin>
+        <plugin><artifactId>maven-enforcer-plugin</artifactId><version>3.0.0-M3</version></plugin>
+        <plugin><artifactId>maven-install-plugin</artifactId><version>3.0.0-M1</version></plugin>
+        <plugin><artifactId>maven-jar-plugin</artifactId><version>3.2.0</version></plugin>
+        <plugin><artifactId>maven-javadoc-plugin</artifactId><version>3.1.1</version></plugin>
+        <plugin><artifactId>maven-resources-plugin</artifactId><version>3.1.0</version></plugin>
+        <plugin><artifactId>maven-shade-plugin</artifactId><version>3.2.1</version></plugin>
+        <plugin><artifactId>maven-site-plugin</artifactId><version>3.8.2</version></plugin>
+        <plugin><artifactId>maven-source-plugin</artifactId><version>3.2.1</version></plugin>
+        <plugin><artifactId>maven-surefire-plugin</artifactId><version>3.0.0-M4</version></plugin>
+        <plugin><artifactId>maven-war-plugin</artifactId><version>3.2.3</version></plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.7</version>
+          <configuration>
+            <rulesUri>classpath:///maven-version-rules.xml</rulesUri>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>nl.basjes.antlr</groupId>
+              <artifactId>devtools</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>[${maven.minimal.version},)</version>
+                  <message>You must use Maven version ${maven.minimal.version} or newer to build this project.</message>
+                  <!-- Reasons for this need:                            -->
+                  <!-- https://issues.apache.org/jira/browse/MDEPLOY-221 -->
+                  <!-- https://issues.apache.org/jira/browse/MNG-6581    -->
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+  </build>
 
   <profiles>
     <profile>
@@ -246,9 +313,8 @@
               <target>${jdkLevel}</target>
               <compilerArgs>
                 <!-- Enable almost all warnings.-->
-                <!-- FIXME: Why does the hive udf fail with "An unknown compilation problem occurred" when using -Xlint:classfile,processing ? -->
                 <!-- Ignore the 'serial' warnings about not having a serialVersionUID -->
-                <arg>-Xlint:all,-classfile,-processing,-serial</arg>
+                <arg>-Xlint:all,-serial</arg>
                 <arg>-Werror</arg>
               </compilerArgs>
               <showWarnings>true</showWarnings>
@@ -297,6 +363,7 @@
 
 
   <modules>
+    <module>devtools</module>
     <module>antlr4-pvisitor</module>
     <module>demonstration</module>
   </modules>

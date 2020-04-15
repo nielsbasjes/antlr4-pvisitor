@@ -19,9 +19,14 @@ import org.antlr.v4.runtime.ParserRuleContext;
  *
  * 		https://github.com/antlr/antlr4/issues/841
  */
-public interface ParseTreeListener {
-	void visitTerminal(TerminalNode<?> node);
-	void visitErrorNode(ErrorNode<?> node);
-    void enterEveryRule(ParserRuleContext<?> ctx);
-    void exitEveryRule(ParserRuleContext<?> ctx);
+public interface ParseTreeListener<P> {
+	void visitTerminal(TerminalNode<P> node);
+	void visitErrorNode(ErrorNode<P> node);
+    void enterEveryRule(ParserRuleContext<P> ctx);
+    void exitEveryRule(ParserRuleContext<P> ctx);
+
+    void visitTerminal(TerminalNode<P> node, P parameter);
+    void visitErrorNode(ErrorNode<P> node, P parameter);
+    void enterEveryRule(ParserRuleContext<P> ctx, P parameter);
+    void exitEveryRule(ParserRuleContext<P> ctx, P parameter);
 }

@@ -72,7 +72,7 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  * This interface defines a complete listener for a parse tree produced by
  * {@link <file.parserName>}.
  */
-public interface <file.grammarName>Listener extends ParseTreeListener {
+public interface <file.grammarName>Listener\<P> extends ParseTreeListener\<P> {
 	<file.listenerNames:{lname |
 /**
 <if(file.listenerLabelRuleNames.(lname))>
@@ -83,7 +83,8 @@ public interface <file.grammarName>Listener extends ParseTreeListener {
 <endif>
  * @param ctx the parse tree
  */
-void enter<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<?> ctx);
+void enter<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx);
+void enter<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx, P parameter);
 /**
 <if(file.listenerLabelRuleNames.(lname))>
  * Exit a parse tree produced by the {@code <lname>\}
@@ -93,7 +94,8 @@ void enter<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<
 <endif>
  * @param ctx the parse tree
  */
-void exit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<?> ctx);}; separator="\n">
+void exit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx);
+void exit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx, P parameter);}; separator="\n">
 }
 >>
 
@@ -113,45 +115,81 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  * which can be extended to create a listener which only needs to handle a subset
  * of the available methods.
  */
-public class <file.grammarName>BaseListener implements <file.grammarName>Listener {
+public class <file.grammarName>BaseListener\<P> implements <file.grammarName>Listener\<P> {
 	<file.listenerNames:{lname |
 /**
  * {@inheritDoc\}
  *
  * \<p>The default implementation does nothing.\</p>
  */
-@Override public void enter<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<?> ctx) { \}
+@Override public void enter<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx) { \}
 /**
  * {@inheritDoc\}
  *
  * \<p>The default implementation does nothing.\</p>
  */
-@Override public void exit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<?> ctx) { \}}; separator="\n">
+@Override public void exit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx) { \}
+/**
+ * {@inheritDoc\}
+ *
+ * \<p>The default implementation does nothing.\</p>
+ */
+@Override public void enter<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx, P parameter) { \}
+/**
+ * {@inheritDoc\}
+ *
+ * \<p>The default implementation does nothing.\</p>
+ */
+@Override public void exit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx, P parameter) { \}}; separator="\n">
 
 	/**
 	 * {@inheritDoc\}
 	 *
 	 * \<p>The default implementation does nothing.\</p>
 	 */
-	@Override public void enterEveryRule(ParserRuleContext\<?> ctx) { }
+	@Override public void enterEveryRule(ParserRuleContext\<P> ctx) { }
 	/**
 	 * {@inheritDoc\}
 	 *
 	 * \<p>The default implementation does nothing.\</p>
 	 */
-	@Override public void exitEveryRule(ParserRuleContext\<?> ctx) { }
+	@Override public void exitEveryRule(ParserRuleContext\<P> ctx) { }
 	/**
 	 * {@inheritDoc\}
 	 *
 	 * \<p>The default implementation does nothing.\</p>
 	 */
-	@Override public void visitTerminal(TerminalNode\<?> node) { }
+	@Override public void enterEveryRule(ParserRuleContext\<P> ctx, P parameter) { }
 	/**
 	 * {@inheritDoc\}
 	 *
 	 * \<p>The default implementation does nothing.\</p>
 	 */
-	@Override public void visitErrorNode(ErrorNode\<?> node) { }
+	@Override public void exitEveryRule(ParserRuleContext\<P> ctx, P parameter) { }
+	/**
+	 * {@inheritDoc\}
+	 *
+	 * \<p>The default implementation does nothing.\</p>
+	 */
+	@Override public void visitTerminal(TerminalNode\<P> node) { }
+	/**
+	 * {@inheritDoc\}
+	 *
+	 * \<p>The default implementation does nothing.\</p>
+	 */
+	@Override public void visitErrorNode(ErrorNode\<P> node) { }
+	/**
+	 * {@inheritDoc\}
+	 *
+	 * \<p>The default implementation does nothing.\</p>
+	 */
+	@Override public void visitTerminal(TerminalNode\<P> node, P parameter) { }
+	/**
+	 * {@inheritDoc\}
+	 *
+	 * \<p>The default implementation does nothing.\</p>
+	 */
+	@Override public void visitErrorNode(ErrorNode\<P> node, P parameter) { }
 }
 >>
 
@@ -831,8 +869,13 @@ public static class <struct.name>\<P> extends <currentRule.name; format="cap">Co
 
 ListenerDispatchMethod(method) ::= <<
 @Override
-public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener listener) {
+public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener\<P> listener) {
 	if ( listener instanceof <parser.grammarName>Listener ) ((<parser.grammarName>Listener)listener).<if(method.isEnter)>enter<else>exit<endif><struct.derivedFromName; format="cap">(this);
+}
+
+@Override
+public void <if(method.isEnter)>enter<else>exit<endif>Rule(ParseTreeListener\<P> listener, P parameter) {
+	if ( listener instanceof <parser.grammarName>Listener ) ((<parser.grammarName>Listener)listener).<if(method.isEnter)>enter<else>exit<endif><struct.derivedFromName; format="cap">(this, parameter);
 }
 >>
 

@@ -27,12 +27,12 @@ I do have it deployed in Maven central, use at your own risk.
     <dependency>
         <groupId>nl.basjes.antlr</groupId>
         <artifactId>antlr4-pvisitor</artifactId>
-        <version>0.1-4.7.2</version>
+        <version>0.2-4.8-1</version>
     </dependency>
 
 
 # LICENSE
-This project is essentially a relatively simple (but not backward compatible!) change of the existing Antlr 4.7.2 code.
+This project is essentially a relatively simple (but not backward compatible!) change of the existing Antlr 4.8-1 code.
 
 These files are simply some of the original Antlr4 files with a generic added here and there.
 

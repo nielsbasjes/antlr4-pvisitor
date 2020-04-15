@@ -8,7 +8,7 @@ BOPEN : '(';
 BCLOSE: ')';
 
 expression
-    : num=NUMBER                     #number
-    | num1=expression PLUS num2=expression   #sumNumbers
-    | BOPEN expression BCLOSE        #bracedExpression
+    : num=NUMBER                                #number
+    | left=expression PLUS right=expression     #sumNumbers
+    | BOPEN expr=expression BCLOSE              #bracedExpression
     ;
