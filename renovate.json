@@ -1,5 +1,18 @@
 {
   "extends": [
     "config:base"
+  ],
+  "packageRules": [
+    {
+      "packagePatterns": ["org.apache.maven.plugins"],
+      "allowedVersions": "!/^(?i).*[-_\\.](Alpha|Beta|RC|M|EA|Snap|snapshot|jboss|atlassian)[-_\\.]?[0-9]?.*$/",
+      "groupName": "Maven plugins"
+    },
+    {
+      "groupSlug": "all",
+      "packagePatterns": ["*"],
+      "allowedVersions": "!/^(?i).*[-_\\.](Alpha|Beta|RC|M|EA|Snap|snapshot|jboss|atlassian)[-_\\.]?[0-9]?.*$/",
+      "groupName": "all dependencies"
+    }
   ]
 }
