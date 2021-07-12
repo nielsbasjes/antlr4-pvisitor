@@ -7,7 +7,7 @@ So we do it manually.
 mvn clean verify -PpackageForRelease
 mvn clean
 
-ANTLR4VERSION=4.8-1
+ANTLR4VERSION=4.9.2
 
 # Prepare the versions for the release
 RELEASEVERSION=0.1-${ANTLR4VERSION}
