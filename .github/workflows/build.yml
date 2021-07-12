@@ -1,0 +1,43 @@
+name: Antlr 4 Param Visitor
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build with Java ${{ matrix.java }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java:
+          - '8'
+          - '11'
+
+    steps:
+    - name: Checkout sourcecode
+      uses: actions/checkout@v2
+
+    - name: Cache Local Maven Repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
+    - name: Setup Java ${{ matrix.java }}
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{ matrix.java }}
+        distribution: 'adopt'
+
+    - name: Build
+      run: mvn -B clean package
+#
+#    - name: Codecov
+#      uses: codecov/codecov-action@v1.5.2
+#      with:
+#        token: ${{ secrets.CODECOV_TOKEN }}
