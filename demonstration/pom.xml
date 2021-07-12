@@ -11,7 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>nl.basjes.antlr</groupId>
-        <version>0.2-4.8-1-SNAPSHOT</version>
+        <version>0.2-4.9.2-SNAPSHOT</version>
         <artifactId>antlr4-pvisitor-parent</artifactId>
     </parent>
     <artifactId>antlr4-pvisitor-demo</artifactId>

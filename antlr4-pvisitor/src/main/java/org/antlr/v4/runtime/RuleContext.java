@@ -185,10 +185,10 @@ public class RuleContext<P> implements RuleNode<P> {
 	@Override
 	public <T> T accept(ParseTreeVisitor<? extends T, P> visitor, P parameter) { return visitor.visitChildren(this, parameter); }
 
-		/** Print out a whole tree, not just a node, in LISP format
-         *  (root child1 .. childN). Print just a node if this is a leaf.
-         *  We have to know the recognizer so we can get rule names.
-         */
+	/** Print out a whole tree, not just a node, in LISP format
+	 *  (root child1 .. childN). Print just a node if this is a leaf.
+	 *  We have to know the recognizer so we can get rule names.
+	 */
 	@Override
 	public String toStringTree(Parser recog) {
 		return Trees.toStringTree(this, recog);
