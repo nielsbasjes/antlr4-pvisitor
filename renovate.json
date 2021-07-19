@@ -4,15 +4,107 @@
   ],
   "packageRules": [
     {
-      "packagePatterns": ["org.apache.maven.plugins"],
-      "allowedVersions": "!/^(?i).*[-_\\.](Alpha|Beta|RC|M|EA|Snap|snapshot|jboss|atlassian)[-_\\.]?[0-9]?.*$/",
-      "groupName": "Maven plugins"
+      "matchPackagePatterns": ["*"],
+      "allowedVersions": "!/^(?i).*[-_\\.](Alpha|Beta|RC|M|EA|Snap|snapshot|jboss|atlassian|does-not-exist)[-_\\.]?[0-9]?.*$/"
     },
     {
-      "groupSlug": "all",
-      "packagePatterns": ["*"],
-      "allowedVersions": "!/^(?i).*[-_\\.](Alpha|Beta|RC|M|EA|Snap|snapshot|jboss|atlassian)[-_\\.]?[0-9]?.*$/",
-      "groupName": "all dependencies"
+      "matchPackagePrefixes": [
+        "org.apache.logging",
+        "org.slf4j"
+      ],
+      "groupSlug": "logging",
+      "groupName": "Logging",
+      "labels": [
+        "Logging"
+      ]
+    },
+    {
+      "matchPackagePrefixes": [
+        "org.apache.maven.plugins",
+        "org.codehaus.mojo",
+        "org.sonarsource.scanner.maven",
+        "com.github.spotbugs",
+        "com.google.code.maven-replacer-plugin",
+        "io.fabric8",
+        "pl.project13.maven",
+        "com.alexecollins.maven.plugin",
+        "org.jetbrains.kotlin",
+        "net.alchim31.maven"
+      ],
+      "groupSlug": "maven_build_plugins",
+      "groupName": "Maven build plugins",
+      "labels": [
+        "Maven build plugins"
+      ]
+    },
+    {
+      "matchPackagePrefixes": [
+        "com.google"
+      ],
+      "groupSlug": "google",
+      "groupName": "Google",
+      "labels": [
+        "Google"
+      ]
+    },
+    {
+      "description": "Disallow Cloudera/Hortonworks/Spring/... internal versions",
+      "matchPackagePrefixes": ["org.apache."],
+      "allowedVersions": "/^[0-9]{1,3}\\.[0-9]{1,3}(?:\\.[0-9]{1,3})?(?:-M[0-9]{1,3})?$/"
+    },
+    {
+      "matchPackagePrefixes": [
+        "commons-",
+        "org.apache.commons"
+      ],
+      "groupSlug": "commons",
+      "groupName": "Apache Commons",
+      "labels": [
+        "Apache Commons"
+      ],
+      "allowedVersions": "/^[0-9]{1,3}\\.[0-9]{1,3}(?:\\.[0-9]{1,3})?(?:-M[0-9]{1,3})?$/"
+    },
+    {
+      "matchPackagePrefixes": [
+        "org.springframework",
+        "io.springfox"
+      ],
+      "groupSlug": "spring",
+      "groupName": "Spring Framework",
+      "labels": [
+        "Spring"
+      ]
+    },
+    {
+      "matchPackagePrefixes": [
+        "io.quarkus"
+      ],
+      "groupSlug": "quarkus",
+      "groupName": "Quarkus",
+      "labels": [
+        "Quarkus"
+      ]
+    },
+    {
+      "matchPackagePrefixes": [
+        "org.junit",
+        "org.scalatest",
+        "org.hamcrest",
+        "org.owasp",
+        "org.pitest",
+        "org.jacoco",
+        "org.sonarsource",
+        "com.github.spotbugs",
+        "org.eluder.coveralls",
+        "org.apache.rat",
+        "net.sourceforge.cobertura",
+        "com.puppycrawl.tools"
+      ],
+      "groupSlug": "testing",
+      "groupName": "Testing and Code Quality",
+      "labels": [
+        "Testing"
+      ]
     }
   ]
 }
