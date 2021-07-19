@@ -37,7 +37,7 @@ public class DemoListener extends ExpressionBaseListener<Sum> {
     }
 
     private void print(String name, ExpressionContext<Sum> ctx, Sum sum) {
-        LOG.info(String.format("%-40s --> %d", ctx.toString(), sum.sum));
+        LOG.info(String.format("[%-13s] %-40s --> SUM = %d", name, ctx.toString(), sum.sum));
     }
 
     @Override
