@@ -21,7 +21,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>nl.basjes.antlr</groupId>
-    <version>1.0.1-4.9.3</version>
+    <version>1.0.1-4.9.3-NEXT-SNAPSHOT</version>
     <artifactId>antlr4-pvisitor-parent</artifactId>
   </parent>
   <modelVersion>4.0.0</modelVersion>
