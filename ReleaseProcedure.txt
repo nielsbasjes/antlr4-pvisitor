@@ -10,8 +10,8 @@ mvn clean
 ANTLR4VERSION=4.9.3
 
 # Prepare the versions for the release. The 'NEXT' is because it is unknown if we just update the Antlr4 version or that we really change something.
-RELEASEVERSION=1.0-${ANTLR4VERSION}
-NEXTVERSION=1.0-${ANTLR4VERSION}-NEXT
+RELEASEVERSION=1.0.1-${ANTLR4VERSION}
+NEXTVERSION=1.0.1-${ANTLR4VERSION}-NEXT
 
 # Creating and publishing the new Tagging
 mvn versions:set -DgenerateBackupPoms=false -DnewVersion=${RELEASEVERSION}
