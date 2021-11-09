@@ -231,7 +231,7 @@ T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> 
  * Visit a parse tree produced by {@link <file.parserName>#<lname>\}.
 <endif>
  * @param ctx the parse tree
- * @param P the userparameter
+ * @param parameter the userparameter
  * @return the visitor result
  */
 default T visit<lname; format="cap">(<file.parserName>.<lname; format="cap">Context\<P> ctx, P parameter) { return visitChildren((RuleNode\<P>)ctx, parameter); \}}; separator="\n">
