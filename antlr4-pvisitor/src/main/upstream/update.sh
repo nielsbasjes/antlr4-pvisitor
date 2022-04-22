@@ -1,9 +1,11 @@
-#!/bin/bash
+#!/bin/bash -x
 SCRIPTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 PROJECT_ROOT=$(cd "$(dirname "${SCRIPTDIR}/../../../../../")" >/dev/null && pwd)
 MODULE_ROOT=$(cd "$(dirname "${SCRIPTDIR}/../../../../")" >/dev/null && pwd)
 
 CURRENT_VERSION_USED=$(fgrep  '<antlr.version>' "${PROJECT_ROOT}/pom.xml" | sed 's@^.*>\(.*\)<.*$@\1@g')
+
+echo "Current version: " ${CURRENT_VERSION_USED}
 
 PATCHED_FILES=(
     "org/antlr/v4/runtime/ParserRuleContext.java"
@@ -31,8 +33,9 @@ ANTLR_REPO_DIR="${SCRIPTDIR}/antlr4_repo"
 
 echo "- Get currently used version"
 cd "${ANTLR_REPO_DIR}" || exit
+git checkout master
 git pull
-git checkout ${CURRENT_VERSION_USED}
+git switch -c ${CURRENT_VERSION_USED}
 
 echo "- Copy currently used version"
 for F in  "${PATCHED_FILES[@]}";
@@ -40,7 +43,7 @@ do
   cp "${ANTLR_REPO_DIR}/runtime/Java/src/${F}" "${MODULE_ROOT}/src/main/java/${F}"
 done
 
-echo "- Create patch"
+echo "- Create patch (i.e. what did I change)"
 cd "${PROJECT_ROOT}" || exit
 rm "${PATCH_FILE}"
 git diff -R antlr4-pvisitor/src/main/java/ > "${PATCH_FILE}"
@@ -48,15 +51,15 @@ git diff -R antlr4-pvisitor/src/main/java/ > "${PATCH_FILE}"
 echo "- Get latest version"
 cd "${ANTLR_REPO_DIR}" || exit
 git checkout master
-LATEST_TAG=$(git tag | grep '^4\.[0-9]\+\(\.[0-9]\+\)\?$' | tail -n1)
-git checkout ${LATEST_TAG}
+LATEST_TAG=$(git tag | grep '^v4\.[0-9]\+\(\.[0-9]\+\)\?$' | tail -n1)
+git switch -c ${LATEST_TAG}
 
-echo "- Copy latest version"
+echo "- Copy latest version: " ${LATEST_TAG}
 for F in "${PATCHED_FILES[@]}";
 do
   cp "${ANTLR_REPO_DIR}/runtime/Java/src/${F}" "${MODULE_ROOT}/src/main/java/${F}"
 done
 
-echo "- Apply patch"
+echo "- Apply patch of my changes to the new files"
 cd "${PROJECT_ROOT}" || exit
 git apply "${PATCH_FILE}"
