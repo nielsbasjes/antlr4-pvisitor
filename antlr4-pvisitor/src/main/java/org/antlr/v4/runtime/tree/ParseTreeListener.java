@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
  *  by {@link ParseTreeWalker}. E.g.,
  *
  *  	ParseTreeWalker walker = new ParseTreeWalker();
- *		walker.walk(myParseTreeListener, myParseTree); <-- triggers events in your listener
+ *		walker.walk(myParseTreeListener, myParseTree); &lt;-- triggers events in your listener
  *
  *  If you want to trigger events in multiple listeners during a single
  *  tree walk, you can use the ParseTreeDispatcher object available at

@@ -31,10 +31,10 @@ import java.util.List;
  *  Parser._ctx.
  *
  *  public final SContext s() throws RecognitionException {
- *      SContext _localctx = new SContext(_ctx, getState()); <-- create new node
- *      enterRule(_localctx, 0, RULE_s);                     <-- push it
+ *      SContext _localctx = new SContext(_ctx, getState()); &lt;-- create new node
+ *      enterRule(_localctx, 0, RULE_s);                     &lt;-- push it
  *      ...
- *      exitRule();                                          <-- pop back to _localctx
+ *      exitRule();                                          &lt;-- pop back to _localctx
  *      return _localctx;
  *  }
  *
@@ -48,9 +48,9 @@ import java.util.List;
  *  symbol s then call r1, which calls r2, the  would look like
  *  this:
  *
- *     SContext[-1]   <- root node (bottom of the stack)
- *     R1Context[p]   <- p in rule s called r1
- *     R2Context[q]   <- q in rule r1 called r2
+ *     SContext[-1]   &lt;- root node (bottom of the stack)
+ *     R1Context[p]   &lt;- p in rule s called r1
+ *     R2Context[q]   &lt;- q in rule r1 called r2
  *
  *  So the top of the stack, _ctx, represents a call to the current
  *  rule and it holds the return address from another rule that invoke
