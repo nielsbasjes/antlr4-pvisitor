@@ -66,8 +66,6 @@ import java.util.List;
  *  @see ParserRuleContext
  */
 public class RuleContext<P> implements RuleNode<P> {
-	public static final ParserRuleContext<?> EMPTY = new ParserRuleContext<>();
-
 	/** What context invoked this rule? */
 	public RuleContext<P> parent;
 
