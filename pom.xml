@@ -31,7 +31,7 @@
     <maven.minimal.version>3.6.0</maven.minimal.version>
 
     <antlr.version>4.11.1</antlr.version>
-    <slf4j.version>2.0.6</slf4j.version>
+    <slf4j.version>2.0.7</slf4j.version>
 
     <git-commit-id-plugin.version>5.0.0</git-commit-id-plugin.version>
   </properties>
