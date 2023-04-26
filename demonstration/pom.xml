@@ -22,7 +22,7 @@
     <url>https://github.com/nielsbasjes/antlr4-pvisitor</url>
 
     <properties>
-        <junit5.version>5.9.2</junit5.version>
+        <junit5.version>5.9.3</junit5.version>
         <hamcrest-core.version>2.2</hamcrest-core.version>
     </properties>
 
