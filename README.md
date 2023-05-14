@@ -27,7 +27,7 @@ I do have it deployed in Maven central, use at your own risk.
     <dependency>
         <groupId>nl.basjes.antlr</groupId>
         <artifactId>antlr4-pvisitor</artifactId>
-        <version>1.0-4.11.1</version>
+        <version>1.0.1-4.12.0</version>
     </dependency>
 
 
