@@ -7,7 +7,7 @@ So we do it manually.
 mvn clean verify -PpackageForRelease
 mvn clean
 
-ANTLR4VERSION=4.11.1
+ANTLR4VERSION=4.12.0
 
 # Prepare the versions for the release. The 'NEXT' is because it is unknown if we just update the Antlr4 version or that we really change something.
 RELEASEVERSION=1.0.1-${ANTLR4VERSION}
