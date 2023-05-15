@@ -395,7 +395,7 @@
   <scm>
     <url>https://github.com/nielsbasjes/antlr4-pvisitor</url>
     <connection>scm:git:https://github.com/nielsbasjes/antlr4-pvisitor.git</connection>
-    <developerConnection>scm:git:.</developerConnection>
+    <developerConnection>scm:git:file:///${project.basedir}</developerConnection>
   </scm>
 
 </project>
