@@ -8,36 +8,27 @@ on:
 
 jobs:
   build:
-    name: Build with Java ${{ matrix.java }}
+    name: Build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java:
-#          - '8'
-          - '11'
 
     steps:
-    - name: Checkout sourcecode
-      uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4
+    - name: 'Checkout sourcecode'
+      uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
 
-    - name: Cache Local Maven Repository
-      uses: actions/cache@v4
+    - name: 'Cache Local Maven Repository'
+      uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
 
-    - name: Setup Java ${{ matrix.java }}
-      uses: actions/setup-java@v4
+    - name: 'Setup: Install JDK 11'
+      uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
       with:
-        java-version: ${{ matrix.java }}
         distribution: 'temurin'
+        java-version: |
+          11
 
     - name: Build
       run: mvn -B clean package
-#
-#    - name: Codecov
-#      uses: codecov/codecov-action@v1.5.2
-#      with:
-#        token: ${{ secrets.CODECOV_TOKEN }}
