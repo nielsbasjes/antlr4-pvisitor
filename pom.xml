@@ -11,7 +11,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>nl.basjes.antlr</groupId>
-  <version>1.0.1-4.12.0-NEXT-SNAPSHOT</version>
+  <version>1.0.1-4.13.2-NEXT-SNAPSHOT</version>
   <artifactId>antlr4-pvisitor-parent</artifactId>
   <packaging>pom</packaging>
 
@@ -347,7 +347,8 @@
               <compilerArgs>
                 <!-- Enable almost all warnings.-->
                 <!-- Ignore the 'serial' warnings about not having a serialVersionUID -->
-                <arg>-Xlint:all,-serial</arg>
+                <!-- Ignore warning about source and target 8 becoming obsolete -->
+                <arg>-Xlint:all,-serial,-options</arg>
                 <arg>-Werror</arg>
                 <arg>-implicit:class</arg>
               </compilerArgs>
