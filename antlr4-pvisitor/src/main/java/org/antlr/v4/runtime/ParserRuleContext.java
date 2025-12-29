@@ -200,8 +200,8 @@ public class ParserRuleContext<P> extends RuleContext<P> {
 		}
 	}
 
-	@Override
 	/** Override to make type more specific */
+	@Override
 	public ParserRuleContext<P> getParent() {
 		return (ParserRuleContext<P>)super.getParent();
 	}
